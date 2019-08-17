@@ -34,6 +34,20 @@ const columns = [{
   Header: 'Outflow'
 }]
 
+function download(filename: string, data: YnabLine[]) {
+  const element = document.createElement('a');
+  const text="Test nummer to"
+  element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+  element.setAttribute('download', filename);
+
+  element.style.display = 'none';
+  document.body.appendChild(element);
+
+  element.click();
+
+  document.body.removeChild(element);
+}
+
 class App extends React.PureComponent<{}, AppState> {
   public constructor(props: {}) {
     super(props);
@@ -48,16 +62,15 @@ class App extends React.PureComponent<{}, AppState> {
   render() {
     return (
       <div className="App">
-        <header className="App-header">
-          <p>
-            <textarea onChange={(e: React.ChangeEvent<HTMLTextAreaElement>)=> {this.parseInput(e.currentTarget.value);}} />
-          </p>
-          <ReactTable
-            data={this.state.parsed}
-            columns={columns}
-            className="-striped -highlight"
-          />
-        </header>
+        <p>
+          <textarea onChange={(e: React.ChangeEvent<HTMLTextAreaElement>)=> {this.parseInput(e.currentTarget.value);}} />
+        </p>
+        <ReactTable
+          data={this.state.parsed}
+          columns={columns}
+          className="-striped -highlight"
+        />
+        <span onClick={() => download('ynab.csv', this.state.parsed)} >download</span>
       </div>
     );
   }
