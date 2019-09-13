@@ -96,6 +96,17 @@ class App extends React.PureComponent<{}, AppState> {
         return d;
     };
 
+    getSelectBoxFiller = (): JSX.Element[] => {
+        const out = [];
+        if (this.state.useHeaders) {
+            this.state.parsed.headers.forEach((h, i): void => {
+                out.push(<option value={i}>{h}</option>);
+            });
+        }
+        out.push(<option value="0">-</option>);
+        return out;
+    };
+
     download = (filename: string = 'ynab.csv'): void => {
         const element = document.createElement('a');
         let text = `"Date","Payee","Memo","Outflow","Inflow"\r\n`;
@@ -133,6 +144,10 @@ class App extends React.PureComponent<{}, AppState> {
                             }
                         />
                         <label htmlFor="checkUseHeaders">Use headers</label>
+                    </span>
+                    <span>
+                        <label htmlFor="checkUseHeaders">Date field</label>
+                        <select id="date">{this.getSelectBoxFiller()}</select>
                     </span>
                     <button onClick={(): void => this.download()}>Download</button>
                 </div>
