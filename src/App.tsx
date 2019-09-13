@@ -103,7 +103,7 @@ class App extends React.PureComponent<{}, AppState> {
                 out.push(<option value={i}>{h}</option>);
             });
         }
-        out.push(<option value="0">-</option>);
+        out.push(<option value="-1">-</option>);
         return out;
     };
 
@@ -146,8 +146,69 @@ class App extends React.PureComponent<{}, AppState> {
                         <label htmlFor="checkUseHeaders">Use headers</label>
                     </span>
                     <span>
-                        <label htmlFor="checkUseHeaders">Date field</label>
-                        <select id="date">{this.getSelectBoxFiller()}</select>
+                        <label htmlFor="date">Date field</label>
+                        <select
+                            onChange={(e: React.ChangeEvent<HTMLSelectElement>): void =>
+                                this.setState({
+                                    mapping: { ...this.state.mapping, date: Number(e.currentTarget.value) },
+                                })
+                            }
+                            id="date"
+                        >
+                            {this.getSelectBoxFiller()}
+                        </select>
+                    </span>
+                    <span>
+                        <label htmlFor="payee">Payee field</label>
+                        <select
+                            onChange={(e: React.ChangeEvent<HTMLSelectElement>): void =>
+                                this.setState({
+                                    mapping: { ...this.state.mapping, payee: Number(e.currentTarget.value) },
+                                })
+                            }
+                            id="payee"
+                        >
+                            {this.getSelectBoxFiller()}
+                        </select>
+                    </span>
+                    <span>
+                        <label htmlFor="memo">Memo field</label>
+                        <select
+                            onChange={(e: React.ChangeEvent<HTMLSelectElement>): void =>
+                                this.setState({
+                                    mapping: { ...this.state.mapping, memo: Number(e.currentTarget.value) },
+                                })
+                            }
+                            id="memo"
+                        >
+                            {this.getSelectBoxFiller()}
+                        </select>
+                    </span>
+                    <span>
+                        <label htmlFor="inflow">Inflow field</label>
+                        <select
+                            onChange={(e: React.ChangeEvent<HTMLSelectElement>): void =>
+                                this.setState({
+                                    mapping: { ...this.state.mapping, inflow: Number(e.currentTarget.value) },
+                                })
+                            }
+                            id="inflow"
+                        >
+                            {this.getSelectBoxFiller()}
+                        </select>
+                    </span>
+                    <span>
+                        <label htmlFor="outflow">Outflow field</label>
+                        <select
+                            onChange={(e: React.ChangeEvent<HTMLSelectElement>): void =>
+                                this.setState({
+                                    mapping: { ...this.state.mapping, outflow: Number(e.currentTarget.value) },
+                                })
+                            }
+                            id="outflow"
+                        >
+                            {this.getSelectBoxFiller()}
+                        </select>
                     </span>
                     <button onClick={(): void => this.download()}>Download</button>
                 </div>
