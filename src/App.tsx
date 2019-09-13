@@ -1,7 +1,7 @@
 import React from 'react';
-import parseDnb from './parsers/parser.dnb';
+import parseDnb from './parsers/parser';
 import ReactTable from 'react-table';
-import Dropzone from 'react-dropzone';
+import Uploader from './Uploader';
 import './App.css';
 import 'react-table/react-table.css';
 
@@ -14,7 +14,6 @@ export interface YnabLine {
 }
 
 interface AppState {
-    unparsed: string;
     parsed: YnabLine[];
 }
 
@@ -41,7 +40,7 @@ const columns = [
     },
 ];
 
-function download(filename: string, data: YnabLine[]) {
+function download(filename: string, data: YnabLine[]): void {
     const element = document.createElement('a');
     const text = 'Test nummer to';
     element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
@@ -58,17 +57,22 @@ function download(filename: string, data: YnabLine[]) {
 class App extends React.PureComponent<{}, AppState> {
     public constructor(props: {}) {
         super(props);
-        this.state = { unparsed: '', parsed: [] };
+        this.state = { parsed: [] };
     }
 
-    private parseInput = (data: string) => {
+    private parseInput = (data: string): void => {
         const p = parseDnb(data);
         this.setState({ parsed: p });
     };
 
-    render() {
+    render(): JSX.Element {
         return (
             <div className="App">
+                <Uploader
+                    onData={(data: YnabLine[]) => {
+                        this.setState({ parsed: data });
+                    }}
+                />
                 <textarea
                     onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
                         this.parseInput(e.currentTarget.value);
