@@ -31,6 +31,7 @@ const columns = [
     {
         Header: 'Date',
         accessor: 'date', // String-based value accessors!
+        width: 125,
     },
     {
         Header: 'Payee',
@@ -43,10 +44,12 @@ const columns = [
     {
         accessor: 'inflow',
         Header: 'Inflow',
+        width: 125,
     },
     {
         accessor: 'outflow',
         Header: 'Outflow',
+        width: 125,
     },
 ];
 
@@ -57,7 +60,7 @@ function convertToCSV(objArray: YnabLine[]): string {
     for (var i = 0; i < array.length; i++) {
         var line = '';
         for (var index in array[i]) {
-            if (line != '') line += ',';
+            if (line !== '') line += ',';
             line += `"${array[i][index]}"`;
         }
 

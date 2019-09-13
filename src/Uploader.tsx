@@ -1,8 +1,6 @@
 import React, { useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
 import parse, { ParsedData } from './parsers/parser';
-import { YnabLine } from './App';
-
 /**
 
 TODO!

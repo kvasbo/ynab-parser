@@ -1,6 +1,4 @@
-import Moment from 'moment';
 import papaparse from 'papaparse';
-import { YnabLine } from '../App';
 
 export interface ParsedData {
     headers: string[];
@@ -17,6 +15,7 @@ export function parseNumber(value: string, locale = navigator.language): number 
     return parseFloat(normalized);
 }
 
+/**
 function parseDnbKreditt(data: string[][]): YnabLine[] {
     const out: YnabLine[] = [];
     data.forEach((l): void => {
@@ -34,6 +33,8 @@ function parseDnbKreditt(data: string[][]): YnabLine[] {
 
     return out;
 }
+
+ */
 
 const parse = (data: string): ParsedData => {
     // Parse dnb kredittkort
