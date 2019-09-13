@@ -2,16 +2,12 @@ import Moment from 'moment';
 import papaparse from 'papaparse';
 import { YnabLine } from '../App';
 
-const parse = (data: string): YnabLine[] => {
-    // Parse dnb kredittkort
-    const d = papaparse.parse(data, { dynamicTyping: false, transform: val => val.trim() });
-    const parsed = parseDnbKreditt(d.data);
-    console.log(d);
-    console.log(parsed);
-    return parsed;
-};
+export interface ParsedData {
+    headers: string[];
+    data: string[][];
+}
 
-function parseNumber(value: string, locale = navigator.language) {
+function parseNumber(value: string, locale = navigator.language): number {
     const example = Intl.NumberFormat(locale).format(1.1);
     const cleanPattern = new RegExp(`[^-+0-9${example.charAt(1)}]`, 'g');
     const cleaned = value.replace(cleanPattern, '');
@@ -20,18 +16,9 @@ function parseNumber(value: string, locale = navigator.language) {
     return parseFloat(normalized);
 }
 
-/*
-function parseNumber(d: string): number | null {
-  if (!d) return null;
-  const regex = /[^\d.,\-eE+]/g
-  const p = d.replace(regex, "");
-  const n = Number(p);
-  return n;
-}*/
-
 function parseDnbKreditt(data: string[][]): YnabLine[] {
     const out: YnabLine[] = [];
-    data.forEach((l, i) => {
+    data.forEach((l): void => {
         //TODO Detect first line
         const d: Moment.Moment = Moment(l[0], 'DD.MM.YYYY');
         const date: string = d.format('YYYY-MM-DD');
@@ -46,5 +33,24 @@ function parseDnbKreditt(data: string[][]): YnabLine[] {
 
     return out;
 }
+
+const parse = (data: string): ParsedData => {
+    // Parse dnb kredittkort
+    const parsed: ParsedData = { headers: [], data: [] };
+    // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+    const d = papaparse.parse(data, { dynamicTyping: false, transform: val => val.trim() });
+
+    if (!d.data || d.data.length < 2) return parsed;
+
+    // Get first element
+    const headers = d.data.shift();
+
+    parsed.headers = headers;
+    parsed.data = d.data;
+
+    console.log(d);
+    console.log(parsed);
+    return parsed;
+};
 
 export default parse;
