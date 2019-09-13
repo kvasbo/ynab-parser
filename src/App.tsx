@@ -119,8 +119,24 @@ class App extends React.PureComponent<{}, AppState> {
                         this.setState({ parsed: data });
                     }}
                 />
+                <div
+                    className="filter"
+                    style={{ display: 'flex', margin: 20, justifyContent: 'space-evenly', alignItems: 'center' }}
+                >
+                    <span>
+                        <input
+                            type="checkbox"
+                            id="checkUseHeaders"
+                            checked={this.state.useHeaders}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>): void =>
+                                this.setState({ useHeaders: e.currentTarget.checked })
+                            }
+                        />
+                        <label htmlFor="checkUseHeaders">Use headers</label>
+                    </span>
+                    <button onClick={(): void => this.download()}>Download</button>
+                </div>
                 <ReactTable data={this.mapData()} columns={columns} className="-striped -highlight" />
-                <span onClick={(): void => this.download()}>download</span>
             </div>
         );
     }
