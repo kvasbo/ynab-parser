@@ -51,7 +51,7 @@ const parse = (data: string): ParsedData => {
 
     // Clean up
     parsed.data = d.data.filter((f): boolean => {
-        if (f.length != headers.length) return false;
+        if (f.length !== headers.length) return false;
         return true;
     });
 

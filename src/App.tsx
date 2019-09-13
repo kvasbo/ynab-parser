@@ -54,12 +54,12 @@ const columns = [
 ];
 
 function convertToCSV(objArray: YnabLine[]): string {
-    var array = typeof objArray != 'object' ? JSON.parse(objArray) : objArray;
-    var str = '';
+    const array = typeof objArray != 'object' ? JSON.parse(objArray) : objArray;
+    let str = '';
 
-    for (var i = 0; i < array.length; i++) {
-        var line = '';
-        for (var index in array[i]) {
+    for (let i = 0; i < array.length; i++) {
+        let line = '';
+        for (const index in array[i]) {
             if (line !== '') line += ',';
             line += `"${array[i][index]}"`;
         }
@@ -107,7 +107,7 @@ class App extends React.PureComponent<{}, AppState> {
         return out;
     };
 
-    download = (filename: string = 'ynab.csv'): void => {
+    download = (filename = 'ynab.csv'): void => {
         const element = document.createElement('a');
         let text = `"Date","Payee","Memo","Outflow","Inflow"\r\n`;
         text += convertToCSV(this.mapData());
