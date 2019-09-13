@@ -50,18 +50,20 @@ const columns = [
     },
 ];
 
-function download(filename: string): void {
-    const element = document.createElement('a');
-    const text = 'Test nummer to';
-    element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
-    element.setAttribute('download', filename);
+function convertToCSV(objArray: YnabLine[]): string {
+    var array = typeof objArray != 'object' ? JSON.parse(objArray) : objArray;
+    var str = '';
 
-    element.style.display = 'none';
-    document.body.appendChild(element);
+    for (var i = 0; i < array.length; i++) {
+        var line = '';
+        for (var index in array[i]) {
+            if (line != '') line += ',';
+            line += `"${array[i][index]}"`;
+        }
 
-    element.click();
-
-    document.body.removeChild(element);
+        str += line + '\r\n';
+    }
+    return str;
 }
 
 class App extends React.PureComponent<{}, AppState> {
@@ -75,8 +77,8 @@ class App extends React.PureComponent<{}, AppState> {
         };
     }
 
-    mapData = (data: ParsedData['data']): YnabLine[] => {
-        const d = data.map(
+    mapData = (): YnabLine[] => {
+        const d = this.state.parsed.data.map(
             (l: string[]): YnabLine => {
                 const date = Moment(l[this.state.mapping.date], this.state.dateFormat).format('YYYY-MM-DD');
                 return {
@@ -91,6 +93,21 @@ class App extends React.PureComponent<{}, AppState> {
         return d;
     };
 
+    download = (filename: string = 'ynab.csv'): void => {
+        const element = document.createElement('a');
+        let text = `"Date","Payee","Memo","Outflow","Inflow"\r\n`;
+        text += convertToCSV(this.mapData());
+        element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+        element.setAttribute('download', filename);
+
+        element.style.display = 'none';
+        document.body.appendChild(element);
+
+        element.click();
+
+        document.body.removeChild(element);
+    };
+
     render(): JSX.Element {
         return (
             <div className="App">
@@ -99,13 +116,8 @@ class App extends React.PureComponent<{}, AppState> {
                         this.setState({ parsed: data });
                     }}
                 />
-                <ReactTable
-                    data={this.mapData(this.state.parsed.data)}
-                    //resolveData={data => this.mapData(data)}
-                    columns={columns}
-                    className="-striped -highlight"
-                />
-                <span onClick={(): void => download('ynab.csv')}>download</span>
+                <ReactTable data={this.mapData()} columns={columns} className="-striped -highlight" />
+                <span onClick={(): void => this.download()}>download</span>
             </div>
         );
     }
