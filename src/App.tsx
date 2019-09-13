@@ -15,6 +15,7 @@ export interface YnabLine {
 
 interface AppState {
     parsed: ParsedData;
+    useHeaders: boolean;
 }
 
 const columns = [
@@ -57,7 +58,7 @@ function download(filename: string): void {
 class App extends React.PureComponent<{}, AppState> {
     public constructor(props: {}) {
         super(props);
-        this.state = { parsed: { headers: [], data: [] } };
+        this.state = { parsed: { headers: [], data: [] }, useHeaders: true };
     }
 
     private parseInput = (data: string): void => {
@@ -69,17 +70,12 @@ class App extends React.PureComponent<{}, AppState> {
         return (
             <div className="App">
                 <Uploader
-                    onData={(data: ParsedData) => {
+                    onData={(data: ParsedData): void => {
                         this.setState({ parsed: data });
                     }}
                 />
-                <textarea
-                    onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
-                        this.parseInput(e.currentTarget.value);
-                    }}
-                />
                 <ReactTable data={this.state.parsed.data} columns={columns} className="-striped -highlight" />
-                <span onClick={() => download('ynab.csv')}>download</span>
+                <span onClick={(): void => download('ynab.csv')}>download</span>
             </div>
         );
     }
