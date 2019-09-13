@@ -1,5 +1,6 @@
 import React from 'react';
-import parseDnb, { ParsedData } from './parsers/parser';
+import Moment from 'moment';
+import { ParsedData, parseNumber } from './parsers/parser';
 import ReactTable from 'react-table';
 import Uploader from './Uploader';
 import './App.css';
@@ -16,6 +17,14 @@ export interface YnabLine {
 interface AppState {
     parsed: ParsedData;
     useHeaders: boolean;
+    mapping: {
+        date: number;
+        memo: number;
+        payee: number;
+        inflow: number;
+        outflow: number;
+    };
+    dateFormat: string;
 }
 
 const columns = [
@@ -58,12 +67,28 @@ function download(filename: string): void {
 class App extends React.PureComponent<{}, AppState> {
     public constructor(props: {}) {
         super(props);
-        this.state = { parsed: { headers: [], data: [] }, useHeaders: true };
+        this.state = {
+            parsed: { headers: [], data: [] },
+            useHeaders: true,
+            mapping: { date: 0, payee: 1, memo: 2, inflow: 3, outflow: 4 },
+            dateFormat: 'DD.MM.YYYY',
+        };
     }
 
-    private parseInput = (data: string): void => {
-        const p = parseDnb(data);
-        this.setState({ parsed: p });
+    mapData = (data: ParsedData['data']): YnabLine[] => {
+        const d = data.map(
+            (l: string[]): YnabLine => {
+                const date = Moment(l[this.state.mapping.date], this.state.dateFormat).format('YYYY-MM-DD');
+                return {
+                    date,
+                    memo: l[this.state.mapping.memo],
+                    payee: l[this.state.mapping.payee],
+                    inflow: parseNumber(l[this.state.mapping.inflow]),
+                    outflow: parseNumber(l[this.state.mapping.outflow]),
+                };
+            },
+        );
+        return d;
     };
 
     render(): JSX.Element {
@@ -74,7 +99,12 @@ class App extends React.PureComponent<{}, AppState> {
                         this.setState({ parsed: data });
                     }}
                 />
-                <ReactTable data={this.state.parsed.data} columns={columns} className="-striped -highlight" />
+                <ReactTable
+                    data={this.mapData(this.state.parsed.data)}
+                    //resolveData={data => this.mapData(data)}
+                    columns={columns}
+                    className="-striped -highlight"
+                />
                 <span onClick={(): void => download('ynab.csv')}>download</span>
             </div>
         );

@@ -7,7 +7,8 @@ export interface ParsedData {
     data: string[][];
 }
 
-function parseNumber(value: string, locale = navigator.language): number {
+export function parseNumber(value: string, locale = navigator.language): number | null {
+    if (!value) return null;
     const example = Intl.NumberFormat(locale).format(1.1);
     const cleanPattern = new RegExp(`[^-+0-9${example.charAt(1)}]`, 'g');
     const cleaned = value.replace(cleanPattern, '');
@@ -46,10 +47,13 @@ const parse = (data: string): ParsedData => {
     const headers = d.data.shift();
 
     parsed.headers = headers;
-    parsed.data = d.data;
 
-    console.log(d);
-    console.log(parsed);
+    // Clean up
+    parsed.data = d.data.filter((f): boolean => {
+        if (f.length != headers.length) return false;
+        return true;
+    });
+
     return parsed;
 };
 
