@@ -53,22 +53,6 @@ const columns = [
     },
 ];
 
-function convertToCSV(objArray: YnabLine[]): string {
-    const array = typeof objArray != 'object' ? JSON.parse(objArray) : objArray;
-    let str = '';
-
-    for (let i = 0; i < array.length; i++) {
-        let line = '';
-        for (const index in array[i]) {
-            if (line !== '') line += ',';
-            line += `"${array[i][index]}"`;
-        }
-
-        str += line + '\r\n';
-    }
-    return str;
-}
-
 class App extends React.PureComponent<{}, AppState> {
     public constructor(props: {}) {
         super(props);
@@ -108,9 +92,21 @@ class App extends React.PureComponent<{}, AppState> {
     };
 
     download = (filename = 'ynab.csv'): void => {
+        const separator = ',';
+        const newLine = '\r\n';
         const element = document.createElement('a');
-        let text = `"Date","Payee","Memo","Outflow","Inflow"\r\n`;
-        text += convertToCSV(this.mapData());
+        let text = `"Date"${separator}"Payee"${separator}"Memo"${separator}"Outflow"${separator}"Inflow"${newLine}`;
+        const data = this.mapData();
+        data.forEach((d): void => {
+            const date = `"${d.date}"`;
+            const memo = d.memo ? `"${d.memo}"` : '';
+            const payee = d.payee ? `"${d.payee}"` : '';
+            const inflow = d.inflow ? `"${d.inflow}"` : '';
+            const outflow = d.outflow ? `"${d.outflow}"` : '';
+            const line = `${date}${separator}${payee}${separator}${memo}${separator}${outflow}${separator}${inflow}${newLine}`;
+            text += line;
+        });
+        //        text += convertToCSV(this.mapData());
         element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
         element.setAttribute('download', filename);
 
