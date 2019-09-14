@@ -130,17 +130,19 @@ class App extends React.PureComponent<{}, AppState> {
                     className="filter"
                     style={{ display: 'flex', margin: 20, justifyContent: 'space-evenly', alignItems: 'center' }}
                 >
-                    <span>
-                        <input
-                            type="checkbox"
-                            id="checkUseHeaders"
-                            checked={this.state.useHeaders}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>): void =>
-                                this.setState({ useHeaders: e.currentTarget.checked })
-                            }
-                        />
-                        <label htmlFor="checkUseHeaders">Use headers</label>
-                    </span>
+                    {false && (
+                        <span>
+                            <input
+                                type="checkbox"
+                                id="checkUseHeaders"
+                                checked={this.state.useHeaders}
+                                onChange={(e: React.ChangeEvent<HTMLInputElement>): void =>
+                                    this.setState({ useHeaders: e.currentTarget.checked })
+                                }
+                            />
+                            <label htmlFor="checkUseHeaders">Use headers</label>
+                        </span>
+                    )}
                     <span>
                         <label htmlFor="date">Date field</label>
                         <select
