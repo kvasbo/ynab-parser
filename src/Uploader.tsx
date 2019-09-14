@@ -42,12 +42,15 @@ function DropZone(props: Props): JSX.Element {
                 display: 'flex',
                 justifyContent: 'center',
                 alignItems: 'center',
-                backgroundColor: 'rgb(200,150,150)',
+                backgroundColor: 'rgb(225,220,220)',
             }}
             {...getRootProps()}
         >
             <input {...getInputProps()} />
-            <p>Drag and drop some files here, or click to select files</p>
+            <p style={{ textAlign: 'center' }}>
+                Drag and drop a bank report csv file here, or click to select a file. <br />
+                All processing happens in the browser.
+            </p>
         </div>
     );
 }
