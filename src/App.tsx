@@ -68,12 +68,16 @@ class App extends React.PureComponent<{}, AppState> {
         const d = this.state.parsed.data.map(
             (l: string[]): YnabLine => {
                 const date = Moment(l[this.state.mapping.date], this.state.dateFormat).format('YYYY-MM-DD');
+                let inflow: number | null = parseNumber(l[this.state.mapping.inflow]);
+                let outflow: number | null = parseNumber(l[this.state.mapping.outflow]);
+                if (isNaN(inflow)) inflow = null;
+                if (isNaN(outflow)) outflow = null;
                 return {
                     date,
                     memo: l[this.state.mapping.memo],
                     payee: l[this.state.mapping.payee],
-                    inflow: parseNumber(l[this.state.mapping.inflow]),
-                    outflow: parseNumber(l[this.state.mapping.outflow]),
+                    inflow,
+                    outflow,
                 };
             },
         );

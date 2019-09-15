@@ -1,5 +1,4 @@
 import papaparse from 'papaparse';
-import Moment from 'moment';
 
 export interface ParsedData {
     headers: string[];
@@ -16,7 +15,7 @@ export function parseNumber(strgx: string): number {
     strg = strg.replace(/[^0-9$.,]/g, '');
     if (strg.indexOf(',') > strg.indexOf('.')) decimal = ',';
     if ((strg.match(new RegExp('\\' + decimal, 'g')) || []).length > 1) decimal = '';
-    if (decimal != '' && strg.length - strg.indexOf(decimal) - 1 == 3 && strg.indexOf('0' + decimal) !== 0)
+    if (decimal !== '' && strg.length - strg.indexOf(decimal) - 1 === 3 && strg.indexOf('0' + decimal) !== 0)
         decimal = '';
     strg = strg.replace(new RegExp('[^0-9$' + decimal + ']', 'g'), '');
     strg = strg.replace(',', '.');
@@ -119,7 +118,6 @@ function findFieldTypes(data: string[][]): ColumnMetaData {
             results[i].probablyMemo += -5;
         }
         // Just a few, probably inflow!
-        console.log(results[i].numbersCount, data.length / 2);
         if (results[i].allNumbers && results[i].numbersCount < results[i].dataSetLength / 2) {
             results[i].probablyInflow += 5;
             results[i].probablyMemo += -5;
