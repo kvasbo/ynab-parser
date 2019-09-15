@@ -4,19 +4,13 @@ import Moment from 'moment';
 export interface ParsedData {
     headers: string[];
     data: string[][];
+    likelyDateColumn?: number;
+    likelyMemoColumn?: number;
+    likeLyInflowColumn?: number;
+    likeLyOutflowColumn?: number;
 }
 
-export function parseNumber(value: string, locale = navigator.language): number | null {
-    if (!value) return null;
-    const example = Intl.NumberFormat(locale).format(1.1);
-    const cleanPattern = new RegExp(`[^-+0-9${example.charAt(1)}]`, 'g');
-    const cleaned = value.replace(cleanPattern, '');
-    const normalized = cleaned.replace(example.charAt(1), '.');
-
-    return parseFloat(normalized);
-}
-
-export function parseNumber2(strgx: string) {
+export function parseNumber(strgx: string): number {
     let strg = strgx || '';
     let decimal = '.';
     strg = strg.replace(/[^0-9$.,]/g, '');
@@ -29,27 +23,6 @@ export function parseNumber2(strgx: string) {
     return parseFloat(strg);
 }
 
-/**
-function parseDnbKreditt(data: string[][]): YnabLine[] {
-    const out: YnabLine[] = [];
-    data.forEach((l): void => {
-        //TODO Detect first line
-        const d: Moment.Moment = Moment(l[0], 'DD.MM.YYYY');
-        const date: string = d.format('YYYY-MM-DD');
-        const payee = '';
-        const memo: string = l[2];
-        const inflow = l[5] ? parseNumber(l[5]) : null;
-        const outflow = l[6] ? parseNumber(l[6]) : null;
-        const line: YnabLine = { date, payee, memo, inflow, outflow };
-        out.push(line);
-    });
-    // console.log(out);
-
-    return out;
-}
-
- */
-
 interface ColumnMetaData {
     [s: number]: {
         maxLength: number;
@@ -57,8 +30,8 @@ interface ColumnMetaData {
         allNumbers: boolean;
         someDates: boolean;
         allDates: boolean;
+        dataSetLength: number;
         numbersCount: number;
-        numbersAverage: number;
         probablyDate: number;
         probablyMemo: number;
         probablyInflow: number;
@@ -66,7 +39,7 @@ interface ColumnMetaData {
     };
 }
 
-function findFieldTypes(data: string[][]) {
+function findFieldTypes(data: string[][]): ColumnMetaData {
     const results: ColumnMetaData = [];
     for (let i = 0; i < data.length; i++) {
         results[i] = {
@@ -76,7 +49,7 @@ function findFieldTypes(data: string[][]) {
             someDates: false,
             allDates: true,
             numbersCount: 0,
-            numbersAverage: 0,
+            dataSetLength: 0,
             // The main event!
             probablyDate: 0,
             probablyMemo: 0,
@@ -85,6 +58,7 @@ function findFieldTypes(data: string[][]) {
         };
 
         data[i].forEach(d => {
+            results[i].dataSetLength += 1; // Increment counter
             if (d.length > results[i].maxLength) results[i].maxLength = d.length; // max length
             if (d.length < results[i].minLength) results[i].minLength = d.length; // min length
             // check if number
@@ -93,17 +67,12 @@ function findFieldTypes(data: string[][]) {
             } // Too long, we don't support billions
             // Do date parsing
             if (d.length < 12 && d.length > 0) {
-                // significant variance in length
-                const date = Moment(d);
-                console.log(d, date);
-                const n = parseNumber2(d);
+                const n = parseNumber(d);
                 if (isNaN(n)) results[i].allNumbers = false;
                 else {
                     results[i].numbersCount += 1;
                 }
             }
-            const n = parseNumber2(d);
-            console.log(n);
         });
         // ANALYSIS HERE
         // Significant variance in length
@@ -140,25 +109,23 @@ function findFieldTypes(data: string[][]) {
             results[i].probablyDate += -2;
         }
         // More than half the lines are sums, probably outflow
-        if (results[i].allNumbers && results[i].numbersCount > data.length / 2) {
+        if (results[i].allNumbers && results[i].numbersCount > results[i].dataSetLength / 2) {
             results[i].probablyOutflow += 5;
             results[i].probablyMemo += -5;
-            // results[i].probablyDate += -5;
         }
         // More than 66% the lines are sums, probably outflow
-        if (results[i].allNumbers && results[i].numbersCount > data.length / 1.5) {
+        if (results[i].allNumbers && results[i].numbersCount > results[i].dataSetLength / 1.5) {
             results[i].probablyOutflow += 5;
             results[i].probablyMemo += -5;
-            // results[i].probablyDate += -5;
         }
         // Just a few, probably inflow!
-        if (results[i].allNumbers && results[i].numbersCount < data.length / 2) {
+        console.log(results[i].numbersCount, data.length / 2);
+        if (results[i].allNumbers && results[i].numbersCount < results[i].dataSetLength / 2) {
             results[i].probablyInflow += 5;
             results[i].probablyMemo += -5;
-            // results[i].probablyDate += -5;
         }
     }
-    console.log(results);
+    return results;
 }
 
 /**
@@ -166,13 +133,12 @@ function findFieldTypes(data: string[][]) {
  * @param data
  * @param ignoreN Skip N rows from start
  */
-function findFields(data: ParsedData['data'], ignoreN = 1): void | number {
+function findFields(data: ParsedData['data'], ignoreN = 1): ColumnMetaData | void {
     // Get length
     const length = data.length;
-    if (length < ignoreN + 1) return -1;
+    if (length < ignoreN + 1) return;
     const width = data[ignoreN].length;
     const vrengt: string[][] = [];
-    console.log(`Length: ${length}, Width: ${width}`);
     // Invert array axes
     for (let i = ignoreN; i < length; i++) {
         for (let j = 0; j < width; j++) {
@@ -180,8 +146,7 @@ function findFields(data: ParsedData['data'], ignoreN = 1): void | number {
             vrengt[j].push(data[i][j]);
         }
     }
-    console.log(vrengt);
-    findFieldTypes(vrengt);
+    return findFieldTypes(vrengt);
 }
 
 const parse = (data: string): ParsedData => {
@@ -203,7 +168,8 @@ const parse = (data: string): ParsedData => {
         return true;
     });
 
-    findFields(parsed.data);
+    const analysedData = findFields(parsed.data);
+    if (!analysedData) return parsed;
 
     return parsed;
 };
