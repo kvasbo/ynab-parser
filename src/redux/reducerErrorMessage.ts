@@ -1,4 +1,11 @@
-import { ADD_ERROR, ErrorMessage, ErrorMessageAction } from './actions';
+import { ADD_ERROR, ErrorMessageAction } from './actions';
+
+export type ErrorMessageCategories = 'debug' | 'info' | 'warning' | 'error';
+
+export interface ErrorMessage {
+    category: ErrorMessageCategories;
+    message: string;
+}
 
 export interface ErrorMessageState {
     errors: ErrorMessage[];

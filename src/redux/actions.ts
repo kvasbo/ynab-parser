@@ -1,9 +1,6 @@
-export const ADD_ERROR = 'ADD_ERROR';
+import { ErrorMessage } from './reducerErrorMessage';
 
-export interface ErrorMessage {
-    category: number;
-    message: string;
-}
+export const ADD_ERROR = 'ADD_ERROR';
 
 export interface ErrorMessageAction {
     type: typeof ADD_ERROR;
