@@ -22,7 +22,8 @@ function DropZone(props: Props): JSX.Element {
     const onFiles = (acceptedFiles: File[]): void => {
         const reader = new FileReader();
         reader.onabort = (): void => props.dispatch(addError({ category: 'error', message: 'File load aborted' }));
-        reader.onerror = (): void => console.log('file reading has failed');
+        reader.onerror = (): void =>
+            props.dispatch(addError({ category: 'error', message: 'File reading has failed' }));
         reader.onload = (): void => {
             // Do whatever you want with the file contents
             const binaryStr = reader.result;
@@ -33,7 +34,6 @@ function DropZone(props: Props): JSX.Element {
             }
         };
         acceptedFiles.forEach((file: File): void => reader.readAsBinaryString(file));
-        console.log(acceptedFiles);
     };
 
     return (
