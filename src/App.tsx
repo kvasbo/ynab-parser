@@ -88,10 +88,28 @@ class App extends React.PureComponent<{}, AppState> {
         const out = [];
         if (this.state.useHeaders) {
             this.state.parsed.headers.forEach((h, i): void => {
-                out.push(<option value={i}>{h}</option>);
+                out.push(
+                    <option key={i} value={i}>
+                        {h}
+                    </option>,
+                );
             });
         }
         out.push(<option value="-1">-</option>);
+        return out;
+    };
+
+    getDateFormats = (): JSX.Element[] => {
+        //const out: JSX.Element[] = [];
+        const formats = ['YYYY-MM-DD', 'DD.MM.YYYY', 'MM.DD.YYYY'];
+        const out = formats.map(f => {
+            const selected = f === this.state.dateFormat ? 'selected' : '';
+            return (
+                <option key={f} value={f} {...selected}>
+                    {f}
+                </option>
+            );
+        });
         return out;
     };
 
@@ -147,6 +165,20 @@ class App extends React.PureComponent<{}, AppState> {
                             <label htmlFor="checkUseHeaders">Use headers</label>
                         </span>
                     )}
+                    <span>
+                        <label htmlFor="dateFormat">Date Format</label>
+                        <select
+                            onChange={(e: React.ChangeEvent<HTMLSelectElement>): void =>
+                                this.setState({
+                                    dateFormat: e.currentTarget.value,
+                                })
+                            }
+                            defaultValue={this.state.dateFormat}
+                            id="dateFormat"
+                        >
+                            {this.getDateFormats()}
+                        </select>
+                    </span>
                     <span>
                         <label htmlFor="date">Date field</label>
                         <select
