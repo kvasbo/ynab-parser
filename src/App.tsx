@@ -25,6 +25,7 @@ interface AppState {
         outflow: number;
     };
     dateFormat: string;
+    singleSumField: boolean;
 }
 
 const columns = [
@@ -61,6 +62,7 @@ class App extends React.PureComponent<{}, AppState> {
             useHeaders: true,
             mapping: { date: 0, payee: 1, memo: 2, inflow: 3, outflow: 4 },
             dateFormat: 'DD.MM.YYYY',
+            singleSumField: false,
         };
     }
 
@@ -68,10 +70,20 @@ class App extends React.PureComponent<{}, AppState> {
         const d = this.state.parsed.data.map(
             (l: string[]): YnabLine => {
                 const date = Moment(l[this.state.mapping.date], this.state.dateFormat).format('YYYY-MM-DD');
-                let inflow: number | null = parseNumber(l[this.state.mapping.inflow]);
-                let outflow: number | null = parseNumber(l[this.state.mapping.outflow]);
-                if (isNaN(inflow)) inflow = null;
-                if (isNaN(outflow)) outflow = null;
+                let inflow: number | null = null;
+                let outflow: number | null = null;
+                if (!this.state.singleSumField) {
+                    // Two separate fields
+                    inflow = parseNumber(l[this.state.mapping.inflow]);
+                    outflow = parseNumber(l[this.state.mapping.outflow]);
+                    if (isNaN(inflow)) inflow = null;
+                    if (isNaN(outflow)) outflow = null;
+                } else {
+                    // Put them in a single field
+                    const sum = parseNumber(l[this.state.mapping.inflow]);
+                    inflow = !isNaN(sum) && sum > 0 ? sum : null;
+                    outflow = !isNaN(sum) && sum < 0 ? -sum : null;
+                }
                 return {
                     date,
                     memo: l[this.state.mapping.memo],
@@ -243,6 +255,17 @@ class App extends React.PureComponent<{}, AppState> {
                         >
                             {this.getSelectBoxFiller()}
                         </select>
+                    </span>
+                    <span>
+                        <input
+                            type="checkbox"
+                            id="checkSingleSumField"
+                            checked={this.state.singleSumField}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>): void =>
+                                this.setState({ singleSumField: e.currentTarget.checked })
+                            }
+                        />
+                        <label htmlFor="checkSingleSumField">In/outflow is same field</label>
                     </span>
                     <button onClick={(): void => this.download()}>Download</button>
                 </div>
