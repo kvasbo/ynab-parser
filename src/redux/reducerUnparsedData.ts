@@ -8,7 +8,7 @@ export interface UnparsedDataState {
 
 const initialState = { data: undefined };
 
-export default function unparsedDataStore(
+export default function unparsedData(
     state: UnparsedDataState = initialState,
     action: UnparsedDataAction,
 ): UnparsedDataState {

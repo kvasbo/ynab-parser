@@ -1,10 +1,16 @@
 import React from 'react';
+import { connect } from 'react-redux';
 import Moment from 'moment';
+import { AppState } from './redux/reducers';
 import { ParsedData, parseNumber } from './parsers/parser';
 import ReactTable from 'react-table';
 import Uploader from './Uploader';
+import Parser from './Parser';
+
+import UnparsedDataTable from './UnparsedDataTable';
 import './App.css';
 import 'react-table/react-table.css';
+import { ParsedDataState } from './redux/reducerParsedData';
 
 export interface YnabLine {
     date: string;
@@ -14,7 +20,7 @@ export interface YnabLine {
     outflow: number | null;
 }
 
-interface AppState {
+interface State {
     parsed: ParsedData;
     useHeaders: boolean;
     mapping: {
@@ -26,6 +32,10 @@ interface AppState {
     };
     dateFormat: string;
     singleSumField: boolean;
+}
+
+interface Props {
+    parsed: ParsedDataState;
 }
 
 const columns = [
@@ -54,8 +64,8 @@ const columns = [
     },
 ];
 
-class App extends React.PureComponent<{}, AppState> {
-    public constructor(props: {}) {
+class App extends React.PureComponent<Props, State> {
+    public constructor(props: Props) {
         super(props);
         this.state = {
             parsed: { headers: [], data: [] },
@@ -67,7 +77,8 @@ class App extends React.PureComponent<{}, AppState> {
     }
 
     mapData = (): YnabLine[] => {
-        const d = this.state.parsed.data.map(
+        if (!this.props.parsed || !this.props.parsed.data) return [];
+        const d = this.props.parsed.data.data.map(
             (l: string[]): YnabLine => {
                 const date = Moment(l[this.state.mapping.date], this.state.dateFormat).format('YYYY-MM-DD');
                 let inflow: number | null = null;
@@ -158,11 +169,8 @@ class App extends React.PureComponent<{}, AppState> {
     render(): JSX.Element {
         return (
             <div className="App">
-                <Uploader
-                    onData={(data: ParsedData): void => {
-                        this.setState({ parsed: data });
-                    }}
-                />
+                <Uploader />
+                <Parser />
                 <div
                     className="filter"
                     style={{ display: 'flex', margin: 20, justifyContent: 'space-evenly', alignItems: 'center' }}
@@ -272,10 +280,18 @@ class App extends React.PureComponent<{}, AppState> {
                     </span>
                     <button onClick={(): void => this.download()}>Download</button>
                 </div>
+                <UnparsedDataTable />
                 <ReactTable data={this.mapData()} columns={columns} className="-striped -highlight" />
             </div>
         );
     }
 }
 
-export default App;
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+function mapStateToProps(state: AppState) {
+    return {
+        parsed: state.parsedData,
+    };
+}
+
+export default connect(mapStateToProps)(App);

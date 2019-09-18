@@ -1,10 +1,18 @@
 import { combineReducers } from 'redux';
-import errorMessages from './reducerErrorMessage';
-import unparsedDataStore from './reducerUnparsedData';
+import errorMessages, { ErrorMessageState } from './reducerErrorMessage';
+import unparsedData, { UnparsedDataState } from './reducerUnparsedData';
+import parsedData, { ParsedDataState } from './reducerParsedData';
+
+export interface AppState {
+    errorMessages: ErrorMessageState;
+    unparsedData: UnparsedDataState;
+    parsedData: ParsedDataState;
+}
 
 const reducers = combineReducers({
     errorMessages,
-    unparsedDataStore,
+    unparsedData,
+    parsedData,
 });
 
 export default reducers;

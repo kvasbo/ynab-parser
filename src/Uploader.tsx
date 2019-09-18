@@ -1,20 +1,9 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import Dropzone from 'react-dropzone';
-import parse, { ParsedData } from './parsers/parser';
 import { addUnparsedData, addError } from './redux/actions';
-/**
-
-TODO!
-                <textarea
-                    onChange={(e: React.ChangeEvent<HTMLTextAreaElement>): void => {
-                        this.parseInput(e.currentTarget.value);
-                    }}
-                />
- */
 
 interface Props {
-    onData: Function;
     dispatch: Function;
 }
 
@@ -29,8 +18,6 @@ function DropZone(props: Props): JSX.Element {
             const binaryStr = reader.result;
             if (typeof binaryStr === 'string') {
                 props.dispatch(addUnparsedData(binaryStr));
-                const d: ParsedData = parse(binaryStr);
-                props.onData(d);
             }
         };
         acceptedFiles.forEach((file: File): void => reader.readAsBinaryString(file));
