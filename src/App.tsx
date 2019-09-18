@@ -107,7 +107,11 @@ class App extends React.PureComponent<{}, AppState> {
                 );
             });
         }
-        out.push(<option value="-1">-</option>);
+        out.push(
+            <option key="nada" value="-1">
+                -
+            </option>,
+        );
         return out;
     };
 
@@ -115,9 +119,8 @@ class App extends React.PureComponent<{}, AppState> {
         //const out: JSX.Element[] = [];
         const formats = ['YYYY-MM-DD', 'DD.MM.YYYY', 'MM.DD.YYYY'];
         const out = formats.map(f => {
-            const selected = f === this.state.dateFormat ? 'selected' : '';
             return (
-                <option key={f} value={f} {...selected}>
+                <option key={f} value={f}>
                     {f}
                 </option>
             );
@@ -180,12 +183,12 @@ class App extends React.PureComponent<{}, AppState> {
                     <span>
                         <label htmlFor="dateFormat">Date Format</label>
                         <select
+                            value={this.state.dateFormat}
                             onChange={(e: React.ChangeEvent<HTMLSelectElement>): void =>
                                 this.setState({
                                     dateFormat: e.currentTarget.value,
                                 })
                             }
-                            defaultValue={this.state.dateFormat}
                             id="dateFormat"
                         >
                             {this.getDateFormats()}
