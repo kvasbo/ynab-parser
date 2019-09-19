@@ -41,7 +41,7 @@ function DropZone(props: Props): JSX.Element {
                         {...getRootProps()}
                     >
                         <input {...getInputProps()} />
-                        <p>Drag and drop some files here, or click to select files</p>
+                        <p>Drag and drop some files here, or click to select.</p>
                     </div>
                 </section>
             )}
