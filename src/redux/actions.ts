@@ -1,7 +1,7 @@
 import { ErrorMessage } from './reducerErrorMessage';
 import { UnparsedData } from './reducerUnparsedData';
 import { ParsedData } from '../parsers/parser';
-import { ParserMapping, ParserSettings, parserSetting, parserMappingType } from './reducerParsedData';
+import { parserMappingType } from './reducerParserMapping';
 
 export const ADD_ERROR = 'ADD_ERROR';
 export const ADD_UNPARSED_DATA = 'ADD_UNPARSED_DATA';
@@ -24,14 +24,9 @@ export interface ParsedDataAction {
     data: ParsedData;
 }
 
-export interface ParsedDataAction {
-    type: typeof ADD_PARSED_DATA;
-    data: ParsedData;
-}
-
 export interface ParserSettingAction {
     type: typeof CHANGE_PARSER_SETTING;
-    key: parserSetting;
+    key: string;
     value: boolean | string | number;
 }
 
@@ -62,7 +57,7 @@ export function addParsedData(data: ParsedData): ParsedDataAction {
     };
 }
 
-export function changeParserSetting(key: parserSetting, value: boolean | number): ParserSettingAction {
+export function changeParserSetting(key: string, value: boolean | number | string): ParserSettingAction {
     return {
         type: CHANGE_PARSER_SETTING,
         key,

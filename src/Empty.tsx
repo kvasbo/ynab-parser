@@ -1,9 +1,9 @@
 import React from 'react';
 
-class Filter extends React.PureComponent<{}, {}> {
+class Empty extends React.PureComponent<{}, {}> {
     render(): JSX.Element {
         return <div />;
     }
 }
 
-export default Filter;
+export default Empty;

@@ -5,6 +5,7 @@ import { addUnparsedData, addError } from './redux/actions';
 
 interface Props {
     dispatch: Function;
+    isActive?: boolean;
 }
 
 function DropZone(props: Props): JSX.Element {
@@ -29,12 +30,13 @@ function DropZone(props: Props): JSX.Element {
                 <section>
                     <div
                         style={{
-                            height: '20vh',
-                            width: '100%',
+                            height: '15vh',
+                            width: '80vw',
                             display: 'flex',
                             justifyContent: 'center',
                             alignItems: 'center',
-                            backgroundColor: 'rgb(225,220,220)',
+                            backgroundColor: 'rgb(240,240,240)',
+                            borderRadius: '1vw',
                         }}
                         {...getRootProps()}
                     >

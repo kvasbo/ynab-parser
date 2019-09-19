@@ -4,13 +4,15 @@ import Moment from 'moment';
 import { AppState } from './redux/reducers';
 import { ParsedData, parseNumber } from './parsers/parser';
 import ReactTable from 'react-table';
-import Uploader from './Uploader';
 import Parser from './Parser';
-
+import Input from './Input';
+import Filter from './Filter';
+import { ParsedDataState } from './redux/reducerParsedData';
+import { ParserSettingsState } from './redux/reducerParserSettings';
+import { ParserMapping } from './redux/reducerParserMapping';
 import UnparsedDataTable from './UnparsedDataTable';
 import './App.css';
 import 'react-table/react-table.css';
-import { ParsedDataState } from './redux/reducerParsedData';
 
 export interface YnabLine {
     date: string;
@@ -36,6 +38,8 @@ interface State {
 
 interface Props {
     parsed: ParsedDataState;
+    parserSettings: ParserSettingsState;
+    parserMapping: ParserMapping;
 }
 
 const columns = [
@@ -64,41 +68,36 @@ const columns = [
     },
 ];
 
-class App extends React.PureComponent<Props, State> {
+class App extends React.PureComponent<Props, {}> {
     public constructor(props: Props) {
         super(props);
-        this.state = {
-            parsed: { headers: [], data: [] },
-            useHeaders: true,
-            mapping: { date: 0, payee: 1, memo: 2, inflow: 3, outflow: 4 },
-            dateFormat: 'DD.MM.YYYY',
-            singleSumField: false,
-        };
     }
 
     mapData = (): YnabLine[] => {
         if (!this.props.parsed || !this.props.parsed.data) return [];
         const d = this.props.parsed.data.data.map(
             (l: string[]): YnabLine => {
-                const date = Moment(l[this.state.mapping.date], this.state.dateFormat).format('YYYY-MM-DD');
+                const date = Moment(l[this.props.parserMapping.date], this.props.parserSettings.dateFormat).format(
+                    'YYYY-MM-DD',
+                );
                 let inflow: number | null = null;
                 let outflow: number | null = null;
-                if (!this.state.singleSumField) {
+                if (!this.props.parserSettings.singleSumColumn) {
                     // Two separate fields
-                    inflow = parseNumber(l[this.state.mapping.inflow]);
-                    outflow = parseNumber(l[this.state.mapping.outflow]);
+                    inflow = parseNumber(l[this.props.parserMapping.inflow]);
+                    outflow = parseNumber(l[this.props.parserMapping.outflow]);
                     if (isNaN(inflow)) inflow = null;
                     if (isNaN(outflow)) outflow = null;
                 } else {
                     // Put them in a single field
-                    const sum = parseNumber(l[this.state.mapping.inflow]);
+                    const sum = parseNumber(l[this.props.parserMapping.inflow]);
                     inflow = !isNaN(sum) && sum > 0 ? sum : null;
                     outflow = !isNaN(sum) && sum < 0 ? -sum : null;
                 }
                 return {
                     date,
-                    memo: l[this.state.mapping.memo],
-                    payee: l[this.state.mapping.payee],
+                    memo: l[this.props.parserMapping.memo],
+                    payee: l[this.props.parserMapping.payee],
                     inflow,
                     outflow,
                 };
@@ -109,8 +108,8 @@ class App extends React.PureComponent<Props, State> {
 
     getSelectBoxFiller = (): JSX.Element[] => {
         const out = [];
-        if (this.state.useHeaders) {
-            this.state.parsed.headers.forEach((h, i): void => {
+        if (this.props.parserSettings.useHeader && this.props.parsed.data && this.props.parsed.data.headers) {
+            this.props.parsed.data.headers.forEach((h, i): void => {
                 out.push(
                     <option key={i} value={i}>
                         {h}
@@ -169,115 +168,13 @@ class App extends React.PureComponent<Props, State> {
     render(): JSX.Element {
         return (
             <div className="App">
-                <Uploader />
+                <Input />
                 <Parser />
+                <Filter />
                 <div
                     className="filter"
                     style={{ display: 'flex', margin: 20, justifyContent: 'space-evenly', alignItems: 'center' }}
                 >
-                    {false && (
-                        <span>
-                            <input
-                                type="checkbox"
-                                id="checkUseHeaders"
-                                checked={this.state.useHeaders}
-                                onChange={(e: React.ChangeEvent<HTMLInputElement>): void =>
-                                    this.setState({ useHeaders: e.currentTarget.checked })
-                                }
-                            />
-                            <label htmlFor="checkUseHeaders">Use headers</label>
-                        </span>
-                    )}
-                    <span>
-                        <label htmlFor="dateFormat">Date Format</label>
-                        <select
-                            value={this.state.dateFormat}
-                            onChange={(e: React.ChangeEvent<HTMLSelectElement>): void =>
-                                this.setState({
-                                    dateFormat: e.currentTarget.value,
-                                })
-                            }
-                            id="dateFormat"
-                        >
-                            {this.getDateFormats()}
-                        </select>
-                    </span>
-                    <span>
-                        <label htmlFor="date">Date field</label>
-                        <select
-                            onChange={(e: React.ChangeEvent<HTMLSelectElement>): void =>
-                                this.setState({
-                                    mapping: { ...this.state.mapping, date: Number(e.currentTarget.value) },
-                                })
-                            }
-                            id="date"
-                        >
-                            {this.getSelectBoxFiller()}
-                        </select>
-                    </span>
-                    <span>
-                        <label htmlFor="payee">Payee field</label>
-                        <select
-                            onChange={(e: React.ChangeEvent<HTMLSelectElement>): void =>
-                                this.setState({
-                                    mapping: { ...this.state.mapping, payee: Number(e.currentTarget.value) },
-                                })
-                            }
-                            id="payee"
-                        >
-                            {this.getSelectBoxFiller()}
-                        </select>
-                    </span>
-                    <span>
-                        <label htmlFor="memo">Memo field</label>
-                        <select
-                            onChange={(e: React.ChangeEvent<HTMLSelectElement>): void =>
-                                this.setState({
-                                    mapping: { ...this.state.mapping, memo: Number(e.currentTarget.value) },
-                                })
-                            }
-                            id="memo"
-                        >
-                            {this.getSelectBoxFiller()}
-                        </select>
-                    </span>
-                    <span>
-                        <label htmlFor="inflow">Inflow field</label>
-                        <select
-                            onChange={(e: React.ChangeEvent<HTMLSelectElement>): void =>
-                                this.setState({
-                                    mapping: { ...this.state.mapping, inflow: Number(e.currentTarget.value) },
-                                })
-                            }
-                            id="inflow"
-                        >
-                            {this.getSelectBoxFiller()}
-                        </select>
-                    </span>
-                    <span>
-                        <label htmlFor="outflow">Outflow field</label>
-                        <select
-                            onChange={(e: React.ChangeEvent<HTMLSelectElement>): void =>
-                                this.setState({
-                                    mapping: { ...this.state.mapping, outflow: Number(e.currentTarget.value) },
-                                })
-                            }
-                            id="outflow"
-                        >
-                            {this.getSelectBoxFiller()}
-                        </select>
-                    </span>
-                    <span>
-                        <input
-                            type="checkbox"
-                            id="checkSingleSumField"
-                            checked={this.state.singleSumField}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>): void =>
-                                this.setState({ singleSumField: e.currentTarget.checked })
-                            }
-                        />
-                        <label htmlFor="checkSingleSumField">In/outflow is same field</label>
-                    </span>
                     <button onClick={(): void => this.download()}>Download</button>
                 </div>
                 <UnparsedDataTable />
@@ -291,6 +188,8 @@ class App extends React.PureComponent<Props, State> {
 function mapStateToProps(state: AppState) {
     return {
         parsed: state.parsedData,
+        parserMapping: state.parserMapping,
+        parserSettings: state.parserSettings,
     };
 }
 
