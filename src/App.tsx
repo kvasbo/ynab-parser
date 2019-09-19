@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import Moment from 'moment';
 import { AppState } from './redux/reducers';
-import { ParsedData, parseNumber } from './parsers/parser';
+import { parseNumber } from './parsers/parser';
 import ReactTable from 'react-table';
 import Parser from './Parser';
 import Input from './Input';
@@ -20,20 +20,6 @@ export interface YnabLine {
     memo: string;
     inflow: number | null;
     outflow: number | null;
-}
-
-interface State {
-    parsed: ParsedData;
-    useHeaders: boolean;
-    mapping: {
-        date: number;
-        memo: number;
-        payee: number;
-        inflow: number;
-        outflow: number;
-    };
-    dateFormat: string;
-    singleSumField: boolean;
 }
 
 interface Props {
@@ -104,38 +90,6 @@ class App extends React.PureComponent<Props, {}> {
             },
         );
         return d;
-    };
-
-    getSelectBoxFiller = (): JSX.Element[] => {
-        const out = [];
-        if (this.props.parserSettings.useHeader && this.props.parsed.data && this.props.parsed.data.headers) {
-            this.props.parsed.data.headers.forEach((h, i): void => {
-                out.push(
-                    <option key={i} value={i}>
-                        {h}
-                    </option>,
-                );
-            });
-        }
-        out.push(
-            <option key="nada" value="-1">
-                -
-            </option>,
-        );
-        return out;
-    };
-
-    getDateFormats = (): JSX.Element[] => {
-        //const out: JSX.Element[] = [];
-        const formats = ['YYYY-MM-DD', 'DD.MM.YYYY', 'MM.DD.YYYY'];
-        const out = formats.map(f => {
-            return (
-                <option key={f} value={f}>
-                    {f}
-                </option>
-            );
-        });
-        return out;
     };
 
     download = (filename = 'ynab.csv'): void => {
