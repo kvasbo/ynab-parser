@@ -5,6 +5,7 @@ export interface ParserSettingsState {
     useHeader: boolean;
     singleSumColumn: boolean;
     dateFormat: string;
+    cutOffDate: string;
 }
 
 const initSettings: ParserSettingsState = {
@@ -12,6 +13,7 @@ const initSettings: ParserSettingsState = {
     useHeader: true,
     singleSumColumn: false,
     dateFormat: 'YYYY-MM-DD',
+    cutOffDate: '1970-01-01',
 };
 
 export default function parsedData(

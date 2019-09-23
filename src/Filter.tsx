@@ -66,6 +66,19 @@ class Filter extends React.PureComponent<Props, {}> {
                             {this.getDateFormats()}
                         </select>
                     </span>
+                    <span style={{ display: 'flex' }}>
+                        <label htmlFor="cutoffDate">Cutoff date</label>
+                        <input
+                            type="date"
+                            id="cutoffDate"
+                            required
+                            pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}"
+                            value={this.props.parserSettings.cutOffDate}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>): void => {
+                                this.props.dispatch(changeParserSetting('cutOffDate', e.currentTarget.value));
+                            }}
+                        />
+                    </span>
                     <span>
                         <label htmlFor="date">Date field</label>
                         <select

@@ -24,10 +24,12 @@ export interface ParsedDataAction {
     data: ParsedData;
 }
 
+type ParserSettinigType = boolean | string | number;
+
 export interface ParserSettingAction {
     type: typeof CHANGE_PARSER_SETTING;
     key: string;
-    value: boolean | string | number;
+    value: ParserSettinigType;
 }
 
 export interface ParserMappingAction {
@@ -57,7 +59,7 @@ export function addParsedData(data: ParsedData): ParsedDataAction {
     };
 }
 
-export function changeParserSetting(key: string, value: boolean | number | string): ParserSettingAction {
+export function changeParserSetting(key: string, value: ParserSettinigType): ParserSettingAction {
     return {
         type: CHANGE_PARSER_SETTING,
         key,

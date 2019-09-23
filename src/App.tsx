@@ -61,7 +61,15 @@ class App extends React.PureComponent<Props, {}> {
 
     mapData = (): YnabLine[] => {
         if (!this.props.parsed || !this.props.parsed.data) return [];
-        const d = this.props.parsed.data.data.map(
+        // Filter
+        const cutoff = Moment(this.props.parserSettings.cutOffDate, 'YYYY-MM-DD');
+        const f = this.props.parsed.data.data.filter((l: string[]): boolean => {
+            const date = Moment(l[this.props.parserMapping.date], this.props.parserSettings.dateFormat);
+            if (date.isBefore(cutoff)) return false;
+            return true;
+        });
+        // Map
+        const d = f.map(
             (l: string[]): YnabLine => {
                 const date = Moment(l[this.props.parserMapping.date], this.props.parserSettings.dateFormat).format(
                     'YYYY-MM-DD',
