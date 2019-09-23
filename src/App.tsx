@@ -129,18 +129,30 @@ class App extends React.PureComponent<Props, {}> {
 
     render(): JSX.Element {
         return (
-            <div className="App">
-                <Input />
-                <Parser />
-                <Filter />
-                <div
-                    className="filter"
-                    style={{ display: 'flex', margin: 20, justifyContent: 'space-evenly', alignItems: 'center' }}
-                >
+            <div className="App" style={{ display: 'flex', flex: 1, flexDirection: 'column' }}>
+                <div className="box" style={{ flex: 0.5 }}>
+                    <Input />
+                </div>
+                <div className="box" style={{ flex: 0.5 }}>
+                    <Parser />
+                </div>
+                <div className="box" style={{ flex: 0.5 }}>
+                    <Filter />
+                </div>
+                <div className="box" style={{ flex: 0.5 }}>
                     <button onClick={(): void => this.download()}>Download</button>
                 </div>
-                <UnparsedDataTable />
-                <ReactTable data={this.mapData()} columns={columns} className="-striped -highlight" />
+                <div className="box" style={{ flex: 0.5 }}>
+                    <UnparsedDataTable />
+                </div>
+                <div className="box" style={{ flex: 1 }}>
+                    <ReactTable
+                        style={{ flex: 1 }}
+                        data={this.mapData()}
+                        columns={columns}
+                        className="-striped -highlight"
+                    />
+                </div>
             </div>
         );
     }

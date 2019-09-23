@@ -25,6 +25,8 @@ class UnparsedDataTable extends React.PureComponent<Props, {}> {
                 }}
             >
                 <textarea
+                    rows={8}
+                    style={{ flex: 1 }}
                     onChange={(event: React.ChangeEvent<HTMLTextAreaElement>): void => {
                         this.valueChanged(event.target.value);
                     }}

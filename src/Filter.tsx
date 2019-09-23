@@ -52,7 +52,7 @@ class Filter extends React.PureComponent<Props, {}> {
 
     render(): JSX.Element {
         return (
-            <div className="box">
+            <div style={{ flex: 1, display: 'flex', flexDirection: 'row', justifyContent: 'space-evenly' }}>
                 <div>
                     <span>
                         <label htmlFor="dateFormat">Date Format</label>
