@@ -143,9 +143,6 @@ class App extends React.PureComponent<Props, {}> {
                     <Filter />
                 </Box>
                 <Box render={renderTheRest}>
-                    <button onClick={(): void => this.download()}>Download</button>
-                </Box>
-                <Box render={renderTheRest}>
                     <UnparsedDataTable />
                 </Box>
                 <Box render={renderTheRest}>
@@ -158,6 +155,25 @@ class App extends React.PureComponent<Props, {}> {
                             className="-striped -highlight"
                         />
                     </div>
+                </Box>
+                <Box render={renderTheRest}>
+                    <span
+                        style={{
+                            flex: 1,
+                            display: 'flex',
+                            padding: 10,
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                        }}
+                    >
+                        <button
+                            disabled={!renderTheRest}
+                            onClick={(): void => this.download()}
+                            style={{ fontSize: 20, padding: 30 }}
+                        >
+                            Download
+                        </button>
+                    </span>
                 </Box>
             </div>
         );

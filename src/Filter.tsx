@@ -52,8 +52,9 @@ class Filter extends React.PureComponent<Props, {}> {
 
     render(): JSX.Element {
         return (
-            <div className="box" style={{ flexDirection: 'row', justifyContent: 'space-evenly' }}>
-                <div>
+            <div className="box" style={{ flexDirection: 'row' }}>
+                <BigNumber value="2" isActive />
+                <div style={{ display: 'flex', flex: 1 }}>
                     <span>
                         <label htmlFor="dateFormat">Date Format</label>
                         <select
@@ -146,7 +147,6 @@ class Filter extends React.PureComponent<Props, {}> {
                         <label htmlFor="checkSingleSumField">In/outflow is same field</label>
                     </span>
                 </div>
-                <BigNumber value="2" isActive />
             </div>
         );
     }
