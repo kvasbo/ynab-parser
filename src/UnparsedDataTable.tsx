@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { AppState } from './redux/reducers';
 import { addUnparsedData } from './redux/actions';
 import { UnparsedDataState } from './redux/reducerUnparsedData';
+import './App.css';
 
 interface Props {
     data: UnparsedDataState['data'];
@@ -17,9 +18,8 @@ class UnparsedDataTable extends React.PureComponent<Props, {}> {
     render(): JSX.Element {
         return (
             <div
+                className="box"
                 style={{
-                    display: 'flex',
-                    flex: 1,
                     fontFamily:
                         'Consolas,Monaco,Lucida Console,Liberation Mono,DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New, monospace',
                 }}

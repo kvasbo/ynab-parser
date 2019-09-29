@@ -12,11 +12,12 @@ textarea {
 }
 
 .box {
-  transition: all 0.25s ease;
+  transition: all 0.5s ease;
   padding: 1vh 1vw 1vh 1vw;
   margin: 1vh 1vw 1vh 1vw;
   display: flex;
   flex-direction: row;
   justify-content: space-evenly;
   align-items: center;
+  flex: 1;
 }
