@@ -4,6 +4,7 @@ import Moment from 'moment';
 import { AppState } from './redux/reducers';
 import { parseNumber } from './parsers/parser';
 import ReactTable from 'react-table';
+import Box from './Box';
 import Parser from './Parser';
 import Input from './Input';
 import Filter from './Filter';
@@ -128,26 +129,36 @@ class App extends React.PureComponent<Props, {}> {
     };
 
     render(): JSX.Element {
-        // const renderTheRest =
-        //    this.props.parsed.data && this.props.parsed.data.data && this.props.parsed.data.data.length > 0;
+        const renderTheRest =
+            this.props.parsed.data !== undefined &&
+            this.props.parsed.data.data !== undefined &&
+            this.props.parsed.data.data.length > 0;
         return (
             <div className="App" style={{ display: 'flex', flex: 1, flexDirection: 'column' }}>
-                <Input />
                 <Parser />
-                <Filter />
-                <div className="box">
+                <Box render>
+                    <Input />
+                </Box>
+                <Box render={renderTheRest}>
+                    <Filter />
+                </Box>
+                <Box render={renderTheRest}>
                     <button onClick={(): void => this.download()}>Download</button>
-                </div>
-                <UnparsedDataTable />
-                <div className="box">
-                    <ReactTable
-                        style={{ flex: 1 }}
-                        defaultPageSize={10}
-                        data={this.mapData()}
-                        columns={columns}
-                        className="-striped -highlight"
-                    />
-                </div>
+                </Box>
+                <Box render={renderTheRest}>
+                    <UnparsedDataTable />
+                </Box>
+                <Box render={renderTheRest}>
+                    <div className="box">
+                        <ReactTable
+                            style={{ flex: 1 }}
+                            defaultPageSize={10}
+                            data={this.mapData()}
+                            columns={columns}
+                            className="-striped -highlight"
+                        />
+                    </div>
+                </Box>
             </div>
         );
     }
