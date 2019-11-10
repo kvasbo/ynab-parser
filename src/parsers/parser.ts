@@ -1,4 +1,5 @@
 import papaparse from 'papaparse';
+import maxBy from 'lodash/maxBy';
 
 export interface ParsedData {
     headers: string[];
@@ -24,6 +25,7 @@ export function parseNumber(strgx: string): number {
 
 interface ColumnMetaData {
     [s: number]: {
+        columnNumber: number;
         maxLength: number;
         minLength: number;
         allNumbers: boolean;
@@ -42,6 +44,7 @@ function findFieldTypes(data: string[][]): ColumnMetaData {
     const results: ColumnMetaData = [];
     for (let i = 0; i < data.length; i++) {
         results[i] = {
+            columnNumber: i,
             maxLength: 0,
             minLength: 999,
             allNumbers: true,
@@ -80,8 +83,14 @@ function findFieldTypes(data: string[][]): ColumnMetaData {
             results[i].probablyOutflow += -100;
             results[i].probablyMemo += -100;
             results[i].probablyDate += 10;
-        }
-        if (results[i].maxLength - results[i].minLength > 4) {
+            if (results[i].maxLength >= 8 && results[i].maxLength <= 10) {
+                // Very likely date!
+                results[i].probablyDate += 30;
+            } else {
+                // Correct by difference from date
+                results[i].probablyDate -= Math.abs((10 - results[i].maxLength) * 5);
+            }
+        } else if (results[i].maxLength - results[i].minLength > 4) {
             results[i].allDates = false;
             results[i].probablyDate += -1;
             results[i].probablyMemo += 1;
@@ -105,7 +114,7 @@ function findFieldTypes(data: string[][]): ColumnMetaData {
             results[i].probablyInflow += 2;
             results[i].probablyOutflow += 2;
             results[i].probablyMemo += -2;
-            results[i].probablyDate += -2;
+            results[i].probablyDate += -20;
         }
         // More than half the lines are sums, probably outflow
         if (results[i].allNumbers && results[i].numbersCount > results[i].dataSetLength / 2) {
@@ -126,6 +135,26 @@ function findFieldTypes(data: string[][]): ColumnMetaData {
     return results;
 }
 
+interface FindFieldsResult {
+    date: number | null;
+    dateProb: number | null;
+    inflow: number | null;
+    inflowProb: number | null;
+    outflow: number | null;
+    outflowProb: number | null;
+}
+
+/**
+ * Try to guess date format
+ * @param data Parsed data set
+ * @param ignoreN Skip N rows from start
+ */
+/*
+function findDateFormat(data: ParsedData['data'], dateColumn: number, ignoreN = 1): number | void {
+    return 0;
+}
+*/
+
 /**
  * Try to infer data types
  * @param data
@@ -137,6 +166,7 @@ function findFields(data: ParsedData['data'], ignoreN = 1): ColumnMetaData | voi
     if (length < ignoreN + 1) return;
     const width = data[ignoreN].length;
     const vrengt: string[][] = [];
+
     // Invert array axes
     for (let i = ignoreN; i < length; i++) {
         for (let j = 0; j < width; j++) {
@@ -144,7 +174,28 @@ function findFields(data: ParsedData['data'], ignoreN = 1): ColumnMetaData | voi
             vrengt[j].push(data[i][j]);
         }
     }
-    return findFieldTypes(vrengt);
+
+    const analysedData = findFieldTypes(vrengt);
+    console.log(analysedData);
+
+    // const dateData = findDateFormat(data, 0); //TODO: Use guessed date field
+    const probableDate = maxBy(Object.values(analysedData), 'probablyDate');
+    const probableInflow = maxBy(Object.values(analysedData), 'probablyInflow');
+    const probableOutflow = maxBy(Object.values(analysedData), 'probablyOutflow');
+    // console.log(probableDate);
+
+    const result: FindFieldsResult = {
+        date: probableDate.columnNumber,
+        dateProb: probableDate.probablyDate,
+        inflow: probableInflow.columnNumber,
+        inflowProb: probableInflow.probablyInflow,
+        outflow: probableOutflow.columnNumber,
+        outflowProb: probableOutflow.probablyOutflow,
+    };
+
+    console.log(result);
+
+    return analysedData;
 }
 
 const parse = (data: string): ParsedData => {
@@ -166,8 +217,7 @@ const parse = (data: string): ParsedData => {
         return true;
     });
 
-    const analysedData = findFields(parsed.data);
-    if (!analysedData) return parsed;
+    findFields(parsed.data);
 
     return parsed;
 };
