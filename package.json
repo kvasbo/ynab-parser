@@ -54,8 +54,8 @@
     "eslint-plugin-react": "^7.14.3",
     "prettier": "^1.18.2",
     "redux-devtools-extension": "^2.13.8",
-    "typescript": "^3.6.3",
+    "trim-left": "^1.0.1",
     "trim-right": "^1.0.1",
-    "trim-left": "^1.0.1"
+    "typescript": "^3.6.3"
   }
 }
