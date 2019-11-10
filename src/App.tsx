@@ -55,6 +55,12 @@ const columns = [
     },
 ];
 
+//Generate a unique file name based on time
+function getTimeBasedFileName(): string {
+    const time = Moment().format('YYYYMMDD-HHmmss');
+    return `ynab-${time}`;
+}
+
 class App extends React.PureComponent<Props, {}> {
     public constructor(props: Props) {
         super(props);
@@ -101,7 +107,7 @@ class App extends React.PureComponent<Props, {}> {
         return d;
     };
 
-    download = (filename = 'ynab.csv'): void => {
+    download = (filename = getTimeBasedFileName()): void => {
         const separator = ',';
         const newLine = '\r\n';
         const element = document.createElement('a');
