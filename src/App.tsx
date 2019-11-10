@@ -142,7 +142,7 @@ class App extends React.PureComponent<Props, {}> {
                 <Box render={renderTheRest}>
                     <Filter />
                 </Box>
-                <Box render={renderTheRest}>
+                <Box render>
                     <UnparsedDataTable />
                 </Box>
                 <Box render={renderTheRest}>
