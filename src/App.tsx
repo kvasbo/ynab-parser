@@ -58,7 +58,7 @@ const columns = [
 //Generate a unique file name based on time
 function getTimeBasedFileName(): string {
     const time = Moment().format('YYYYMMDD-HHmmss');
-    return `ynab-${time}`;
+    return `ynab-${time}.csv`;
 }
 
 class App extends React.PureComponent<Props, {}> {
