@@ -13,6 +13,7 @@ interface Props {
     parsed: ParsedDataState['data'];
     parserSettings: ParserSettingsState;
     parserMapping: ParserMapping;
+    parserMappingGuesses: ParserMapping;
     unparsedData: UnparsedDataState['data'];
     dispatch: Function;
 }
@@ -20,6 +21,11 @@ interface Props {
 class Filter extends React.PureComponent<Props, {}> {
     getSelectBoxFiller = (): JSX.Element[] => {
         const out = [];
+        out.push(
+            <option key="nada" value={-1}>
+                -
+            </option>,
+        );
         if (this.props.parserSettings.useHeader && this.props.parsed && this.props.parsed.headers) {
             this.props.parsed.headers.forEach((h, i): void => {
                 out.push(
@@ -29,11 +35,6 @@ class Filter extends React.PureComponent<Props, {}> {
                 );
             });
         }
-        out.push(
-            <option key="nada" value={-1}>
-                -
-            </option>,
-        );
         return out;
     };
 
@@ -48,6 +49,26 @@ class Filter extends React.PureComponent<Props, {}> {
             );
         });
         return out;
+    };
+
+    applyMagic = (): void => {
+        // Magic button pressed!
+        console.log('Magic!');
+        if (this.props.parserMappingGuesses.date !== null) {
+            this.props.dispatch(changeParserMapping('date', this.props.parserMappingGuesses.date));
+        }
+        if (this.props.parserMappingGuesses.inflow !== null) {
+            this.props.dispatch(changeParserMapping('inflow', this.props.parserMappingGuesses.inflow));
+        }
+        if (this.props.parserMappingGuesses.outflow !== null) {
+            this.props.dispatch(changeParserMapping('outflow', this.props.parserMappingGuesses.outflow));
+        }
+        if (this.props.parserMappingGuesses.memo !== null) {
+            this.props.dispatch(changeParserMapping('memo', this.props.parserMappingGuesses.memo));
+        }
+        if (this.props.parserMappingGuesses.payee !== null) {
+            this.props.dispatch(changeParserMapping('payee', this.props.parserMappingGuesses.payee));
+        }
     };
 
     render(): JSX.Element {
@@ -87,6 +108,7 @@ class Filter extends React.PureComponent<Props, {}> {
                                 this.props.dispatch(changeParserMapping('date', Number(e.currentTarget.value)));
                             }}
                             id="date"
+                            value={this.props.parserMapping.date !== null ? this.props.parserMapping.date : -1}
                         >
                             {this.getSelectBoxFiller()}
                         </select>
@@ -98,6 +120,7 @@ class Filter extends React.PureComponent<Props, {}> {
                                 this.props.dispatch(changeParserMapping('payee', Number(e.currentTarget.value)));
                             }}
                             id="payee"
+                            value={this.props.parserMapping.memo !== null ? this.props.parserMapping.memo : -1}
                         >
                             {this.getSelectBoxFiller()}
                         </select>
@@ -109,6 +132,7 @@ class Filter extends React.PureComponent<Props, {}> {
                                 this.props.dispatch(changeParserMapping('memo', Number(e.currentTarget.value)));
                             }}
                             id="memo"
+                            value={this.props.parserMapping.memo !== null ? this.props.parserMapping.memo : -1}
                         >
                             {this.getSelectBoxFiller()}
                         </select>
@@ -120,6 +144,7 @@ class Filter extends React.PureComponent<Props, {}> {
                                 this.props.dispatch(changeParserMapping('inflow', Number(e.currentTarget.value)));
                             }}
                             id="inflow"
+                            value={this.props.parserMapping.inflow !== null ? this.props.parserMapping.inflow : -1}
                         >
                             {this.getSelectBoxFiller()}
                         </select>
@@ -131,6 +156,7 @@ class Filter extends React.PureComponent<Props, {}> {
                                 this.props.dispatch(changeParserMapping('outflow', Number(e.currentTarget.value)));
                             }}
                             id="outflow"
+                            value={this.props.parserMapping.outflow !== null ? this.props.parserMapping.outflow : -1}
                         >
                             {this.getSelectBoxFiller()}
                         </select>
@@ -146,6 +172,9 @@ class Filter extends React.PureComponent<Props, {}> {
                         />
                         <label htmlFor="checkSingleSumField">In/outflow is same field</label>
                     </span>
+                    <span>
+                        <button onClick={this.applyMagic}>Magic!</button>
+                    </span>
                 </div>
             </div>
         );
@@ -159,6 +188,7 @@ function mapStateToProps(state: AppState) {
         parsed: state.parsedData.data,
         parserSettings: state.parserSettings,
         parserMapping: state.parserMapping,
+        parserMappingGuesses: state.parserMappingGuesses,
     };
 }
 

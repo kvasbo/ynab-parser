@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { AppState } from './redux/reducers';
-import { addParsedData } from './redux/actions';
+import { addParsedData, changeParserMappingGuess } from './redux/actions';
 import { UnparsedDataState } from './redux/reducerUnparsedData';
 import parse from './parsers/parser';
 
@@ -15,7 +15,17 @@ class Parser extends React.PureComponent<Props, {}> {
     UNSAFE_componentWillReceiveProps(props: Props): void {
         if (props.data) {
             const parsedData = parse(props.data);
+
+            // Parsed data to redux
             this.props.dispatch(addParsedData(parsedData));
+
+            // Best guesses to Redux
+            if (parsedData.likeLyInflowColumn !== undefined)
+                this.props.dispatch(changeParserMappingGuess('inflow', parsedData.likeLyInflowColumn));
+            if (parsedData.likeLyOutflowColumn !== undefined)
+                this.props.dispatch(changeParserMappingGuess('outflow', parsedData.likeLyOutflowColumn));
+            if (parsedData.likelyDateColumn !== undefined)
+                this.props.dispatch(changeParserMappingGuess('date', parsedData.likelyDateColumn));
         }
     }
 

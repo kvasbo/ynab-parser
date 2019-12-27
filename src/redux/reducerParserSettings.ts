@@ -12,7 +12,7 @@ const initSettings: ParserSettingsState = {
     skipLines: 1,
     useHeader: true,
     singleSumColumn: false,
-    dateFormat: 'YYYY-MM-DD',
+    dateFormat: 'DD.MM.YYYY',
     cutOffDate: '1970-01-01',
 };
 

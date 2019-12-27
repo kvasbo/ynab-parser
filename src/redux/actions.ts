@@ -8,6 +8,7 @@ export const ADD_UNPARSED_DATA = 'ADD_UNPARSED_DATA';
 export const ADD_PARSED_DATA = 'ADD_PARSED_DATA';
 export const CHANGE_PARSER_SETTING = 'CHANGE_PARSER_SETTING';
 export const CHANGE_PARSER_MAPPING = 'CHANGE_PARSER_MAPPING';
+export const CHANGE_PARSER_MAPPING_GUESS = 'CHANGE_PARSER_MAPPING_GUESS';
 
 export interface ErrorMessageAction {
     type: typeof ADD_ERROR;
@@ -34,6 +35,12 @@ export interface ParserSettingAction {
 
 export interface ParserMappingAction {
     type: typeof CHANGE_PARSER_MAPPING;
+    key: parserMappingType;
+    value: number;
+}
+
+export interface ParserMappingGuessAction {
+    type: typeof CHANGE_PARSER_MAPPING_GUESS;
     key: parserMappingType;
     value: number;
 }
@@ -70,6 +77,14 @@ export function changeParserSetting(key: string, value: ParserSettinigType): Par
 export function changeParserMapping(key: parserMappingType, value: number): ParserMappingAction {
     return {
         type: CHANGE_PARSER_MAPPING,
+        key,
+        value,
+    };
+}
+
+export function changeParserMappingGuess(key: parserMappingType, value: number): ParserMappingGuessAction {
+    return {
+        type: CHANGE_PARSER_MAPPING_GUESS,
         key,
         value,
     };

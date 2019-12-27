@@ -17,8 +17,8 @@ import 'react-table/react-table.css';
 
 export interface YnabLine {
     date: string;
-    payee: string;
-    memo: string;
+    payee: string | null;
+    memo: string | null;
     inflow: number | null;
     outflow: number | null;
 }
@@ -71,6 +71,7 @@ class App extends React.PureComponent<Props, {}> {
         // Filter
         const cutoff = Moment(this.props.parserSettings.cutOffDate, 'YYYY-MM-DD');
         const f = this.props.parsed.data.data.filter((l: string[]): boolean => {
+            if (!this.props.parserMapping.date) return true;
             const date = Moment(l[this.props.parserMapping.date], this.props.parserSettings.dateFormat);
             if (date.isBefore(cutoff)) return false;
             return true;
@@ -78,27 +79,34 @@ class App extends React.PureComponent<Props, {}> {
         // Map
         const d = f.map(
             (l: string[]): YnabLine => {
-                const date = Moment(l[this.props.parserMapping.date], this.props.parserSettings.dateFormat).format(
-                    'YYYY-MM-DD',
-                );
+                const date =
+                    this.props.parserMapping.date !== null
+                        ? Moment(l[this.props.parserMapping.date], this.props.parserSettings.dateFormat).format(
+                              'YYYY-MM-DD',
+                          )
+                        : '';
                 let inflow: number | null = null;
                 let outflow: number | null = null;
                 if (!this.props.parserSettings.singleSumColumn) {
                     // Two separate fields
-                    inflow = parseNumber(l[this.props.parserMapping.inflow]);
-                    outflow = parseNumber(l[this.props.parserMapping.outflow]);
-                    if (isNaN(inflow)) inflow = null;
-                    if (isNaN(outflow)) outflow = null;
+                    inflow = this.props.parserMapping.inflow ? parseNumber(l[this.props.parserMapping.inflow]) : null;
+                    outflow = this.props.parserMapping.outflow
+                        ? parseNumber(l[this.props.parserMapping.outflow])
+                        : null;
+                    if (!inflow || isNaN(inflow)) inflow = null;
+                    if (!outflow || isNaN(outflow)) outflow = null;
                 } else {
                     // Put them in a single field
-                    const sum = parseNumber(l[this.props.parserMapping.inflow]);
-                    inflow = !isNaN(sum) && sum > 0 ? sum : null;
-                    outflow = !isNaN(sum) && sum < 0 ? -sum : null;
+                    const sum = this.props.parserMapping.inflow
+                        ? parseNumber(l[this.props.parserMapping.inflow])
+                        : null;
+                    inflow = sum && !isNaN(sum) && sum > 0 ? sum : null;
+                    outflow = sum && !isNaN(sum) && sum < 0 ? -sum : null;
                 }
                 return {
                     date,
-                    memo: l[this.props.parserMapping.memo],
-                    payee: l[this.props.parserMapping.payee],
+                    memo: this.props.parserMapping.memo ? l[this.props.parserMapping.memo] : '',
+                    payee: this.props.parserMapping.payee ? l[this.props.parserMapping.payee] : '',
                     inflow,
                     outflow,
                 };

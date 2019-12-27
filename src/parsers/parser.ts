@@ -160,7 +160,7 @@ function findDateFormat(data: ParsedData['data'], dateColumn: number, ignoreN = 
  * @param data
  * @param ignoreN Skip N rows from start
  */
-function findFields(data: ParsedData['data'], ignoreN = 1): ColumnMetaData | void {
+function findFields(data: ParsedData['data'], ignoreN = 1): FindFieldsResult | void {
     // Get length
     const length = data.length;
     if (length < ignoreN + 1) return;
@@ -176,7 +176,6 @@ function findFields(data: ParsedData['data'], ignoreN = 1): ColumnMetaData | voi
     }
 
     const analysedData = findFieldTypes(vrengt);
-    console.log(analysedData);
 
     // const dateData = findDateFormat(data, 0); //TODO: Use guessed date field
     const probableDate = maxBy(Object.values(analysedData), 'probablyDate');
@@ -193,9 +192,9 @@ function findFields(data: ParsedData['data'], ignoreN = 1): ColumnMetaData | voi
         outflowProb: probableOutflow.probablyOutflow,
     };
 
-    console.log(result);
+    // console.log(result);
 
-    return analysedData;
+    return result;
 }
 
 const parse = (data: string): ParsedData => {
@@ -217,7 +216,14 @@ const parse = (data: string): ParsedData => {
         return true;
     });
 
-    findFields(parsed.data);
+    const guesses = findFields(parsed.data);
+
+    // Add guesses
+    if (guesses) {
+        parsed.likeLyInflowColumn = guesses.inflow !== null ? guesses.inflow : undefined;
+        parsed.likeLyOutflowColumn = guesses.outflow !== null ? guesses.outflow : undefined;
+        parsed.likelyDateColumn = guesses.date !== null ? guesses.date : undefined;
+    }
 
     return parsed;
 };

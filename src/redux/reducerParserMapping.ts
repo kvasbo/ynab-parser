@@ -1,26 +1,26 @@
 import { CHANGE_PARSER_MAPPING, ParserMappingAction } from './actions';
 
 export interface ParserMapping {
-    date: number;
-    payee: number;
-    inflow: number;
-    outflow: number;
-    memo: number;
-    sum: number;
+    date: number | null;
+    payee: number | null;
+    inflow: number | null;
+    outflow: number | null;
+    memo: number | null;
+    sum: number | null;
 }
 
-const initMapping: ParserMapping = {
-    date: -1,
-    payee: -1,
-    inflow: -1,
-    outflow: -1,
-    memo: -1,
-    sum: -1,
+export const defaultValues: ParserMapping = {
+    date: null,
+    payee: null,
+    inflow: null,
+    outflow: null,
+    memo: null,
+    sum: null,
 };
 
 export type parserMappingType = 'date' | 'payee' | 'inflow' | 'outflow' | 'memo' | 'sum';
 
-export default function parsedData(state: ParserMapping = initMapping, action: ParserMappingAction): ParserMapping {
+export default function parsedData(state: ParserMapping = defaultValues, action: ParserMappingAction): ParserMapping {
     switch (action.type) {
         case CHANGE_PARSER_MAPPING: {
             return { ...state, [action.key]: action.value };
