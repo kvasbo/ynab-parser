@@ -93,15 +93,15 @@ class App extends React.PureComponent<Props, {}> {
                     outflow = this.props.parserMapping.outflow
                         ? parseNumber(l[this.props.parserMapping.outflow])
                         : null;
-                    if (!inflow || isNaN(inflow)) inflow = null;
-                    if (!outflow || isNaN(outflow)) outflow = null;
+                    if (!inflow) inflow = null;
+                    if (!outflow) outflow = null;
                 } else {
                     // Put them in a single field
                     const sum = this.props.parserMapping.inflow
                         ? parseNumber(l[this.props.parserMapping.inflow])
                         : null;
-                    inflow = sum && !isNaN(sum) && sum > 0 ? sum : null;
-                    outflow = sum && !isNaN(sum) && sum < 0 ? -sum : null;
+                    inflow = sum && sum > 0 ? sum : null;
+                    outflow = sum && sum < 0 ? -sum : null;
                 }
                 return {
                     date,
