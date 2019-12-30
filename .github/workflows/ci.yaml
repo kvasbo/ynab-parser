@@ -22,8 +22,8 @@ jobs:
     - name: Archive Production Client
       uses: actions/upload-artifact@master
       with:
-        name: public
-        path: public
+        name: build
+        path: build
 
   deploy:
     name: Deploy
@@ -45,9 +45,9 @@ jobs:
       - name: Download Artifact
         uses: actions/download-artifact@master
         with:
-          name: public
-          path: public
-      - name: Add Firebase to Path
-        run: alias firebase="`npm config get prefix`/bin/firebase"
+          name: build
+          path: build
+      #- name: Add Firebase to Path
+      #  run: alias firebase="`npm config get prefix`/bin/firebase"
       - name: Deploy to Firebase
         run: firebase deploy --only hosting -m "Github Action, Commit $COMMIT_ID" --non-interactive --token $FIREBASE_TOKEN
