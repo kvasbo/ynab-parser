@@ -19,7 +19,7 @@ jobs:
       run: yarn run lint
     - name: Build Client
       run: CI=false yarn run build  
-    - name: Archive Production Client
+    - name: Archive Build
       uses: actions/upload-artifact@master
       with:
         name: build
