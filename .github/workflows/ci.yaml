@@ -1,0 +1,53 @@
+name: CI
+on: push
+
+
+jobs:
+  build:
+   name: Lint and Build
+   runs-on: ubuntu-18.04
+   steps:
+    - name: Check Out
+      uses: actions/checkout@v1
+    - name: Setup Node
+      uses: actions/setup-node@v1
+      with:
+        node-version: 10.x
+    - name: Install Dependencies
+      run: yarn install --non-interactive --pure-lockfile
+    - name: Lint Client
+      run: yarn run lint
+    - name: Build Client
+      run: CI=false run build  
+    - name: Archive Production Client
+      uses: actions/upload-artifact@master
+      with:
+        name: public
+        path: public
+
+  deploy:
+    name: Deploy
+    needs: build
+    runs-on: ubuntu-18.04
+    env:
+      FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+      COMMIT_ID: ${{ github.sha }}
+    if: github.ref == 'refs/heads/master'
+    steps:
+      - name: Setup Node
+        uses: actions/setup-node@v1
+        with:
+          node-version: 10.x
+      - name: Install Firebase 
+        run: npm install -g firebase-tools
+      - name: Checkout Repo
+        uses: actions/checkout@master
+      - name: Download Artifact
+        uses: actions/download-artifact@master
+        with:
+          name: public
+          path: public
+      - name: Add Firebase to Path
+        run: alias firebase="`npm config get prefix`/bin/firebase"
+      - name: Deploy to Firebase
+        run: firebase deploy --only hosting -m "Github Action, Commit $COMMIT_ID" --non-interactive --token $FIREBASE_TOKEN

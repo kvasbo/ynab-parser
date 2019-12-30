@@ -21,7 +21,8 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "lint": "tsc --noEmit && eslint 'src/**/*.{js,ts,tsx}' --quiet --fix"
+    "lint": "tsc --noEmit && eslint 'src/**/*.{js,ts,tsx}'",
+    "lint-fix": "tsc --noEmit && eslint 'src/**/*.{js,ts,tsx}' --fix"
   },
   "eslintConfig": {
     "extends": "react-app"
