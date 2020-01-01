@@ -1,5 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import DatePicker from 'react-datepicker';
+import Moment from 'moment';
 import { AppState } from './redux/reducers';
 import { UnparsedDataState } from './redux/reducerUnparsedData';
 import { ParsedDataState } from './redux/reducerParsedData';
@@ -8,6 +10,7 @@ import { ParserMapping } from './redux/reducerParserMapping';
 import { changeParserSetting, changeParserMapping } from './redux/actions';
 import BigNumber from './BigNumber';
 import './App.css';
+import 'react-datepicker/dist/react-datepicker.css';
 
 interface Props {
     parsed: ParsedDataState['data'];
@@ -51,9 +54,14 @@ class Filter extends React.PureComponent<Props, {}> {
         return out;
     };
 
+    handleCutoffChange(d: Date | null): void {
+        if (!d) return;
+        const mD = Moment(d).format('YYYY-MM-DD');
+        this.props.dispatch(changeParserSetting('cutOffDate', mD));
+    }
+
     applyMagic = (): void => {
         // Magic button pressed!
-        console.log('Magic!');
         if (this.props.parserMappingGuesses.date !== null) {
             this.props.dispatch(changeParserMapping('date', this.props.parserMappingGuesses.date));
         }
@@ -88,16 +96,14 @@ class Filter extends React.PureComponent<Props, {}> {
                             {this.getDateFormats()}
                         </select>
                     </span>
-                    <span style={{ display: 'flex' }}>
+                    <span style={{ display: 'flex', flex: 1 }}>
                         <label htmlFor="cutoffDate">Cutoff date</label>
-                        <input
-                            type="date"
+                        <br />
+                        <DatePicker
                             id="cutoffDate"
-                            required
-                            pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}"
-                            value={this.props.parserSettings.cutOffDate}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>): void => {
-                                this.props.dispatch(changeParserSetting('cutOffDate', e.currentTarget.value));
+                            selected={Moment(this.props.parserSettings.cutOffDate).toDate()}
+                            onChange={(d): void => {
+                                this.handleCutoffChange(d);
                             }}
                         />
                     </span>
