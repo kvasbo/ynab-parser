@@ -1,3 +1,4 @@
+import Moment from 'moment';
 import { CHANGE_PARSER_SETTING, ParsedDataAction, ParserSettingAction } from './actions';
 
 export interface ParserSettingsState {
@@ -5,7 +6,7 @@ export interface ParserSettingsState {
     useHeader: boolean;
     singleSumColumn: boolean;
     dateFormat: string;
-    cutOffDate: string;
+    cutOffDate: Date;
 }
 
 const initSettings: ParserSettingsState = {
@@ -13,7 +14,9 @@ const initSettings: ParserSettingsState = {
     useHeader: true,
     singleSumColumn: false,
     dateFormat: 'DD.MM.YYYY',
-    cutOffDate: '1970-01-01',
+    cutOffDate: Moment()
+        .subtract(1, 'month')
+        .toDate(),
 };
 
 export default function parsedData(

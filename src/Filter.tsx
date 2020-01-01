@@ -56,8 +56,7 @@ class Filter extends React.PureComponent<Props, {}> {
 
     handleCutoffChange(d: Date | null): void {
         if (!d) return;
-        const mD = Moment(d).format('YYYY-MM-DD');
-        this.props.dispatch(changeParserSetting('cutOffDate', mD));
+        this.props.dispatch(changeParserSetting('cutOffDate', d));
     }
 
     applyMagic = (): void => {
