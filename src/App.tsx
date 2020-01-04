@@ -4,6 +4,7 @@ import Moment from 'moment';
 import { AppState } from './redux/reducers';
 import { parseNumber } from './parsers/parser';
 import ReactTable from 'react-table';
+import * as qs from 'query-string';
 import Box from './Box';
 import Parser from './Parser';
 import Input from './Input';
