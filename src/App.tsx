@@ -67,6 +67,9 @@ function getTimeBasedFileName(): string {
 }
 
 class App extends React.PureComponent<Props, State> {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    parameters: Record<string, any> = qs.parse(window.location.search);
+
     public constructor(props: Props) {
         super(props);
         this.state = {
@@ -157,10 +160,12 @@ class App extends React.PureComponent<Props, State> {
     };
 
     render(): JSX.Element {
+        // Only render most UI if data present or debug mode.
         const renderTheRest =
-            this.props.parsed.data !== undefined &&
-            this.props.parsed.data.data !== undefined &&
-            this.props.parsed.data.data.length > 0;
+            (this.props.parsed.data !== undefined &&
+                this.props.parsed.data.data !== undefined &&
+                this.props.parsed.data.data.length > 0) ||
+            this.parameters.debug;
         return (
             <div className="App" style={{ display: 'flex', flex: 1, flexDirection: 'column' }}>
                 <Parser />
