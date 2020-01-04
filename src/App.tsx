@@ -29,6 +29,10 @@ interface Props {
     parserMapping: ParserMapping;
 }
 
+interface State {
+    filteredRowsDate: number;
+}
+
 const columns = [
     {
         Header: 'Date',
@@ -61,21 +65,30 @@ function getTimeBasedFileName(): string {
     return `ynab-${time}.csv`;
 }
 
-class App extends React.PureComponent<Props, {}> {
+class App extends React.PureComponent<Props, State> {
     public constructor(props: Props) {
         super(props);
+        this.state = {
+            filteredRowsDate: 0,
+        };
     }
 
     mapData = (): YnabLine[] => {
+        let filteredRowsDate = 0;
         if (!this.props.parsed || !this.props.parsed.data) return [];
-        // Filter
-        const cutoff = Moment(this.props.parserSettings.cutOffDate, 'YYYY-MM-DD');
+        // Filter for cutoff date
+        const cutoff = Moment(this.props.parserSettings.cutOffDate);
         const f = this.props.parsed.data.data.filter((l: string[]): boolean => {
-            if (!this.props.parserMapping.date) return true;
+            // Date not set, screw it
+            if (this.props.parserMapping.date === null) return true;
             const date = Moment(l[this.props.parserMapping.date], this.props.parserSettings.dateFormat);
-            if (date.isBefore(cutoff)) return false;
+            if (date.isBefore(cutoff)) {
+                filteredRowsDate += 1;
+                return false;
+            }
             return true;
         });
+        this.setState({ filteredRowsDate });
         // Map
         const d = f.map(
             (l: string[]): YnabLine => {
@@ -159,6 +172,7 @@ class App extends React.PureComponent<Props, {}> {
                 <Box render>
                     <UnparsedDataTable />
                 </Box>
+                <Box render={renderTheRest}>{this.state.filteredRowsDate} rows removed due to cutoff date.</Box>
                 <Box render={renderTheRest}>
                     <div className="box">
                         <ReactTable
