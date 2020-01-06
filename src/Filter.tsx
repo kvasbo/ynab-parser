@@ -8,7 +8,6 @@ import { ParsedDataState } from './redux/reducerParsedData';
 import { ParserSettingsState } from './redux/reducerParserSettings';
 import { ParserMapping } from './redux/reducerParserMapping';
 import { changeParserSetting, changeParserMapping } from './redux/actions';
-import BigNumber from './BigNumber';
 import './App.css';
 import 'react-datepicker/dist/react-datepicker.css';
 
@@ -81,7 +80,6 @@ class Filter extends React.PureComponent<Props, {}> {
     render(): JSX.Element {
         return (
             <div className="box" style={{ flexDirection: 'row' }}>
-                <BigNumber value="2" isActive />
                 <div style={{ display: 'flex', flex: 1 }}>
                     <span>
                         <label htmlFor="dateFormat">Date Format</label>
