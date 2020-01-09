@@ -1,7 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { AppState } from './redux/reducers';
-// import Dropzone from 'react-dropzone';
 import { addUnparsedData } from './redux/actions';
 import { UnparsedDataState } from './redux/reducerUnparsedData';
 
@@ -28,12 +27,24 @@ class DropZone extends React.Component<Props, {}> {
         console.log('Drag end');
     };
 
+    // File dropped
     onDrop = (e: React.DragEvent<HTMLTextAreaElement>): void => {
         e.preventDefault();
-        if (typeof window.FileReader === 'undefined') {
-            alert('File upload not supported');
+        const file = e.dataTransfer.files[0];
+        this.getFileReader().readAsText(file);
+    };
+
+    // File uploaded via button
+    openFile = (e: React.ChangeEvent<HTMLInputElement>): void => {
+        if (!e.target || !e.target.files || !e.target.files[0]) {
             return;
         }
+        const file = e.target.files[0];
+        this.getFileReader().readAsText(file);
+    };
+
+    // Create the file reader object
+    getFileReader = (): FileReader => {
         const reader = new FileReader();
         reader.onload = (): void => {
             const binaryStr = reader.result;
@@ -44,8 +55,7 @@ class DropZone extends React.Component<Props, {}> {
                 alert('Could not read file as text');
             }
         };
-        const file = e.dataTransfer.files[0];
-        reader.readAsText(file);
+        return reader;
     };
 
     onTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>): void => {
@@ -55,23 +65,6 @@ class DropZone extends React.Component<Props, {}> {
 
     doClear = (): void => {
         this.props.dispatch(addUnparsedData(''));
-    };
-
-    openFile = (e: React.ChangeEvent<HTMLInputElement>): void => {
-        if (!e.target || !e.target.files || !e.target.files[0]) {
-            return;
-        }
-        const reader = new FileReader();
-        reader.onload = (): void => {
-            const binaryStr = reader.result;
-            if (typeof binaryStr === 'string') {
-                this.props.dispatch(addUnparsedData(binaryStr));
-            } else {
-                alert('Could not read file as text');
-            }
-        };
-        const file = e.target.files[0];
-        reader.readAsText(file);
     };
 
     render(): JSX.Element {
@@ -108,29 +101,3 @@ function mapStateToProps(state: AppState) {
 }
 
 export default connect(mapStateToProps)(DropZone);
-
-/*
-
-                <Dropzone onDrop={(acceptedFiles): void => this.onFiles(acceptedFiles)}>
-                    {({ getRootProps, getInputProps }): JSX.Element => (
-                        <section>
-                            <div
-                                style={{
-                                    height: '15vh',
-                                    width: '80vw',
-                                    display: 'flex',
-                                    justifyContent: 'center',
-                                    alignItems: 'center',
-                                    backgroundColor: 'rgb(240,240,240)',
-                                    borderRadius: '1vw',
-                                }}
-                                {...getRootProps()}
-                            >
-                                <input {...getInputProps()} />
-                                <p>Drag and drop some files here, click to select a file, or paste data below.</p>
-                            </div>
-                        </section>
-                    )}
-                </Dropzone>
-
-                */

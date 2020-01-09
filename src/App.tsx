@@ -12,7 +12,6 @@ import Filter from './Filter';
 import { ParsedDataState } from './redux/reducerParsedData';
 import { ParserSettingsState } from './redux/reducerParserSettings';
 import { ParserMapping } from './redux/reducerParserMapping';
-import UnparsedDataTable from './UnparsedDataTable';
 import './App.css';
 import 'react-table/react-table.css';
 
