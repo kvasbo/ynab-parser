@@ -12,7 +12,6 @@ import Filter from './Filter';
 import { ParsedDataState } from './redux/reducerParsedData';
 import { ParserSettingsState } from './redux/reducerParserSettings';
 import { ParserMapping } from './redux/reducerParserMapping';
-import UnparsedDataTable from './UnparsedDataTable';
 import './App.css';
 import 'react-table/react-table.css';
 
@@ -174,9 +173,6 @@ class App extends React.PureComponent<Props, State> {
                 </Box>
                 <Box render={renderTheRest}>
                     <Filter />
-                </Box>
-                <Box render>
-                    <UnparsedDataTable />
                 </Box>
                 <Box render={renderTheRest}>{this.state.filteredRowsDate} rows removed due to cutoff date.</Box>
                 <Box render={renderTheRest}>
