@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 // import Dropzone from 'react-dropzone';
-import { addUnparsedData, addError } from './redux/actions';
+import { addUnparsedData } from './redux/actions';
 
 interface Props {
     dispatch: Function;
@@ -16,28 +16,12 @@ class DropZone extends React.PureComponent<Props, {}> {
         this.textArea = React.createRef();
     }
 
-    /*
-    onFiles = (acceptedFiles: File[]): void => {
-        const reader = new FileReader();
-        reader.onabort = (): void => this.props.dispatch(addError({ category: 'error', message: 'File load aborted' }));
-        reader.onerror = (): void =>
-            this.props.dispatch(addError({ category: 'error', message: 'File reading has failed' }));
-        reader.onload = (): void => {
-            // Do whatever you want with the file contents
-            const binaryStr = reader.result;
-            if (typeof binaryStr === 'string') {
-                this.props.dispatch(addUnparsedData(binaryStr));
-            }
-        };
-        acceptedFiles.forEach((file: File): void => reader.readAsBinaryString(file));
-    };
-    */
-
-    onDragOver = (e: React.DragEvent<HTMLTextAreaElement>): void => {
-        console.log('Drag over');
+    onDragOver = (): void => {
+        //TODO Style change
+        // e: React.DragEvent<HTMLTextAreaElement>
     };
 
-    onDragEnd = (e: React.DragEvent<HTMLTextAreaElement>): void => {
+    onDragEnd = (): void => {
         console.log('Drag end');
     };
 
@@ -63,7 +47,7 @@ class DropZone extends React.PureComponent<Props, {}> {
 
     onTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>): void => {
         const newValue = e.target.value;
-        console.log(newValue);
+        this.props.dispatch(addUnparsedData(newValue));
     };
 
     render(): JSX.Element {
@@ -77,7 +61,7 @@ class DropZone extends React.PureComponent<Props, {}> {
                 <textarea
                     style={{ display: 'flex', flex: 1, borderRadius: 5, borderColor: '#AAAAAA' }}
                     ref={this.textArea}
-                    placeholder="Drag and drop some files here, click to select a file, or paste data below."
+                    placeholder="Drag and drop a file here, click button to select a file, or paste csv(ish) data."
                     onChange={this.onTextChange}
                     onDragOver={this.onDragOver}
                     onDragEnd={this.onDragEnd}
