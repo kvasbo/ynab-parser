@@ -33,31 +33,27 @@ class DropZone extends React.PureComponent<Props, {}> {
 
     render(): JSX.Element {
         return (
-            <div>
-                <textarea id={'test'}></textarea>
-
-                <Dropzone onDrop={(acceptedFiles): void => this.onFiles(acceptedFiles)}>
-                    {({ getRootProps, getInputProps }): JSX.Element => (
-                        <section>
-                            <div
-                                style={{
-                                    height: '15vh',
-                                    width: '80vw',
-                                    display: 'flex',
-                                    justifyContent: 'center',
-                                    alignItems: 'center',
-                                    backgroundColor: 'rgb(240,240,240)',
-                                    borderRadius: '1vw',
-                                }}
-                                {...getRootProps()}
-                            >
-                                <input {...getInputProps()} />
-                                <p>Drag and drop some files here, click to select a file, or paste data below.</p>
-                            </div>
-                        </section>
-                    )}
-                </Dropzone>
-            </div>
+            <Dropzone onDrop={(acceptedFiles): void => this.onFiles(acceptedFiles)}>
+                {({ getRootProps, getInputProps }): JSX.Element => (
+                    <section>
+                        <div
+                            style={{
+                                height: '15vh',
+                                width: '80vw',
+                                display: 'flex',
+                                justifyContent: 'center',
+                                alignItems: 'center',
+                                backgroundColor: 'rgb(240,240,240)',
+                                borderRadius: '1vw',
+                            }}
+                            {...getRootProps()}
+                        >
+                            <input {...getInputProps()} />
+                            <p>Drag and drop some files here, click to select a file, or paste data below.</p>
+                        </div>
+                    </section>
+                )}
+            </Dropzone>
         );
     }
 }
