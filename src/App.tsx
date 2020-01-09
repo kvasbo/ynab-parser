@@ -175,9 +175,6 @@ class App extends React.PureComponent<Props, State> {
                 <Box render={renderTheRest}>
                     <Filter />
                 </Box>
-                <Box render>
-                    <UnparsedDataTable />
-                </Box>
                 <Box render={renderTheRest}>{this.state.filteredRowsDate} rows removed due to cutoff date.</Box>
                 <Box render={renderTheRest}>
                     <div className="box">
