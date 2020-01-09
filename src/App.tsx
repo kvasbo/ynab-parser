@@ -167,6 +167,9 @@ class App extends React.PureComponent<Props, State> {
             this.parameters.debug;
         return (
             <div className="App" style={{ display: 'flex', flex: 1, flexDirection: 'column' }}>
+                <div>
+                    <img src="./logo.svg" style={{ width: '25vw' }} />
+                </div>
                 <Parser />
                 <Box render>
                     <Input />
