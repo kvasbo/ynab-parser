@@ -94,7 +94,7 @@ class DropZone extends React.Component<Props, {}> {
                     value={this.props.data}
                 ></textarea>
                 <button onClick={this.doClear}>Clear data</button>
-                <input type="file" accept="text/*" onChange={this.openFile} />
+                <input type="file" accept="text/*, .csv, .tsv" onChange={this.openFile} />
             </div>
         );
     }
