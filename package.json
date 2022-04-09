@@ -4,7 +4,7 @@
   "private": true,
   "dependencies": {
     "lodash": "^4.17.15",
-    "moment": "^2.24.0",
+    "moment": "^2.29.2",
     "papaparse": "^5.1.0",
     "prop-types": "^15.5.0",
     "query-string": "^6.9.0",
